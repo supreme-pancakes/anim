@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 // colors
 var gray = "#cccccc";
 var grid = "#eeeeee";
