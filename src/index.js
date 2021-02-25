@@ -2457,7 +2457,7 @@ math.import({
   laplace(f, _ti, _tf, _dt) {
     let ti = 0;
     let tf = 1000;
-    const dt = 0.01;
+    let dt = 0.01;
 
     if (arguments.length >= 2) {
       ti = _ti;
@@ -2468,7 +2468,7 @@ math.import({
     }
 
     if (arguments.length >= 4) {
-      _dt = dt;
+      dt = _dt;
     }
 
     const F = function (s) {
