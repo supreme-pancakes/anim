@@ -1,4 +1,5 @@
 import math from './math';
+import { saveAs } from './FileSaver';
 
 // colors
 var gray = "#cccccc";
