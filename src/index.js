@@ -1,3 +1,5 @@
+import math from './math';
+
 // colors
 var gray = "#cccccc";
 var grid = "#eeeeee";
