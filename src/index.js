@@ -1,7 +1,9 @@
-import math from './math';
-import $ from './jquery-3.2.1.min';
+import $ from 'jquery';
+import { create, all } from 'mathjs';
 import { saveAs } from './FileSaver';
 import { initVolumeMeter } from './volume-meter';
+
+const math = create(all);
 
 // colors
 var gray = "#cccccc";
