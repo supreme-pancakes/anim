@@ -631,7 +631,7 @@ math.import({
 
         return m;
     },
-    rotate: function(rx, ry, rz) { // rotates the camera
+    rotateCamera: function(rx, ry, rz) { // rotates the camera
         let rxyz = [rx, ry, rz];
         if (!isNaN(math.sum(rxyz))) {
             cam.properties[frame].rxyz = rxyz;
