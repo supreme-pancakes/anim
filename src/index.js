@@ -7,11 +7,7 @@ const math = create(all);
 
 // colors
 const gray = '#cccccc';
-const grid = '#eeeeee';
-const grid_guide = '#dddddd';
-const graph_guide = '#aaaaaa';
 const dark = '#000000';
-const light = '#ffffff';
 
 const colors = ['#000000', '#E74C3C', '#2980B9', '#FFA400', '#66E07A', gray];
 
@@ -29,8 +25,6 @@ let error_text = '';
 const scale_factor = 2; // retina
 
 // scatter
-const point_size = 6;
-
 let c;
 let ctx;
 let win_width; let
@@ -38,7 +32,6 @@ let win_width; let
 
 let formula_text;
 
-let animator;
 let objs = [];
 let selected_objs = [];
 let frames;
@@ -48,7 +41,6 @@ let pen;
 let num_frames = 3;
 let frame = 1; // current frame
 let next_frame;
-const rendering = false;
 let presenting = false;
 let debug = false;
 let view_frame = false;
@@ -80,7 +72,6 @@ let mouse = { x: 0, y: 0 };
 let mouse_last = { x: 0, y: 0 };
 let mouse_start = { x: 0, y: 0 };
 let mouse_grid = { x: 0, y: 0 };
-const mouse_last_grid = { x: 0, y: 0 };
 let mouse_graph = { x: 0, y: 0 };
 
 const brackets = {
@@ -89,7 +80,6 @@ const brackets = {
 
 let t = 0; // time for parser
 let millis = 0;
-const date = new Date();
 
 const pi2 = 2 * Math.PI;
 const mat_num_width = 140; // matrix max number width
@@ -134,7 +124,7 @@ function cached(dims) {
 // import
 function graph(fn, d1, d2, d3) { // graphs y=f(x) from -10 to 10
   let y = 0;
-  let p; let gp;
+  let p;
   const N = 400;
   let points = cached([N + 1, 3]);
   const asyms = cached([N + 1, 1])._data;
@@ -461,7 +451,6 @@ math.import({
   },
   fifo(matrix, value) {
     matrix = matrix._data;
-    const first = matrix[0];
     const N = matrix.length;
     for (let i = 0; i < N - 1; i++) {
       matrix[i] = matrix[i + 1];
@@ -592,7 +581,7 @@ math.import({
     if (N == 1) {
       const shape = arguments[0];
       let m = cached(shape._data);
-      m = m.map((value, index, matrix) => randn_bm());
+      m = m.map(() => randn_bm());
 
       return m;
     }
@@ -736,7 +725,7 @@ math.import({
 
     ctx.save();
     ctx.beginPath();
-    let p; let lastp;
+    let p;
     for (let i = 0; i < N; i++) {
       p = points[i];
       if (i == 0) {
@@ -744,8 +733,6 @@ math.import({
       } else {
         ctx.lineTo(p[0], p[1]);
       }
-
-      lastp = p;
     }
     ctx.stroke();
     if (fill) {
@@ -866,7 +853,7 @@ math.import({
   view(x, p) { // matrix, position: [x, y, z]
     let t = [];
     if (x._data) {
-      x = x.map((value, index, matrix) => pretty_round(value));
+      x = x.map((value) => pretty_round(value));
 
       const d = x._data;
       if (x._size.length == 1) {
@@ -904,7 +891,7 @@ math.import({
   },
   sig(x) { // sigmoid(x)
     if (x._data) {
-      const b = x.map((value, index, matrix) => sig(value));
+      const b = x.map((value) => sig(value));
       return b;
     }
 
@@ -912,7 +899,7 @@ math.import({
   },
   sigp(x) { // sigmoid_prime(x)
     if (x._data) {
-      const b = x.map((value, index, matrix) => sigp(value));
+      const b = x.map((value) => sigp(value));
       return b;
     }
 
@@ -1386,9 +1373,6 @@ math.import({
     const xsize = matrix_size(xformat);
 
     // draw neural network
-    const rows = W._size[0];
-    const cols = W._size[1];
-
     const high = math.visnet(math.matrix([x._size[0], W._size[0]]), true);
     const high_conn = high[0];
     const high_neur = high[1];
@@ -1401,7 +1385,7 @@ math.import({
     ctx.font = font_anim;
 
     ctx.translate(loc[0] + 10, loc[1] + 330);
-    draw_matrix(rformat, (i, j) => {
+    draw_matrix(rformat, (i) => {
       ctx.fillStyle = 'black';
       for (let n = 0; n < high_neur.length; n++) {
         const highn = high_neur[n];
@@ -1427,7 +1411,7 @@ math.import({
 
     // draw x matrix
     ctx.translate(Wsize[0] + pad * 3, rsize[1] / 2 - xsize[1] / 2);
-    draw_matrix(xformat, (i, j) => {
+    draw_matrix(xformat, (i) => {
       ctx.fillStyle = 'black';
 
       for (let n = 0; n < high_neur.length; n++) {
@@ -1452,11 +1436,7 @@ math.import({
     const rsize = matrix_size(rformat);
 
     // draw neural network
-    const rows = W._size[0];
-    const cols = W._size[1];
-
     const high = math.visnet(math.matrix([x._size[0], W._size[0]]), true);
-    const high_conn = high[0];
     const high_neur = high[1];
 
     // draw matrices
@@ -1467,7 +1447,7 @@ math.import({
     ctx.font = font_anim;
 
     ctx.translate(loc[0] + 10, loc[1] + 330);
-    draw_matrix(rformat, (i, j) => {
+    draw_matrix(rformat, (i) => {
       ctx.fillStyle = 'black';
       for (let n = 0; n < high_neur.length; n++) {
         const highn = high_neur[n];
@@ -1482,7 +1462,6 @@ math.import({
 
     // draw dot prod matrix
     ctx.translate(rsize[0] + pad * 3, 0);
-    const dp = [];
 
     let round = pretty_round_one;
     if (ctrl) {
@@ -2478,7 +2457,7 @@ math.import({
   laplace(f, _ti, _tf, _dt) {
     let ti = 0;
     let tf = 1000;
-    const dt = 0.01;
+    let dt = 0.01;
 
     if (arguments.length >= 2) {
       ti = _ti;
@@ -2489,7 +2468,7 @@ math.import({
     }
 
     if (arguments.length >= 4) {
-      _dt = dt;
+      dt = _dt;
     }
 
     const F = function (s) {
@@ -2513,21 +2492,8 @@ math.import({
   },
 });
 
-function report_error(e) {
-  console.log(e);
-  error_timer = 100;
-  error_text = e;
-}
-
 // undo
 let states = [];
-
-function rgb1ToHex(a) {
-  const c = [Math.round(a[0] * 255),
-    Math.round(a[1] * 255),
-    Math.round(a[2] * 255)];
-  return rgbToHex(c);
-}
 
 // http://www.javascriptkit.com/javatutors/requestanimationframe.shtml
 window.requestAnimationFrame = window.requestAnimationFrame
@@ -2545,41 +2511,6 @@ function guid() {
   }
   return `${s4() + s4()}-${s4()}-${s4()}-${
     s4()}-${s4()}${s4()}${s4()}`;
-}
-
-function Animator(fps, canvas, frames, callback) {
-  this.fps = fps;
-  this.canvas = canvas;
-  this.frames = frames;
-  this.callback = callback;
-
-  if (this.frames > 0) {
-    // Create a capturer that exports a WebM video
-    this.capturer = new CCapture({ format: 'png', framerate: this.fps });
-    this.capturer.start();
-  }
-
-  this.animate = function () {
-    if (this.frames > 0) {
-      this.frames -= 1;
-      requestAnimationFrame(this.animate);
-    } else {
-      if (this.capturer) {
-        this.capturer.stop();
-        this.capturer.save();
-        this.capturer = null;
-      }
-
-      setTimeout(function () {
-        requestAnimationFrame(this.animate);
-      }, 1000 / this.fps);
-    }
-
-    this.callback();
-    this.capturer.capture(this.canvas);
-  };
-
-  this.animate();
 }
 
 function pretty_round(num) {
@@ -2964,7 +2895,6 @@ function draw_simple(text) {
 
 function draw_network(layers, pos) {
   const pad = 120;
-  const radius = 20;
 
   loc = function (i, j, units) {
     const pad2 = 250;
@@ -3107,8 +3037,6 @@ function format_matrix(matrix) {
 
 function get_mouse_pos(canvas, evt) {
   const rect = canvas.getBoundingClientRect();
-  let x; let
-    y;
 
   if (evt.touches) {
     for (let i = 0; i < evt.touches.length; i++) {
@@ -3140,24 +3068,6 @@ function distance(a, b) {
 
 function between(a, b) {
   return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
-}
-
-function grad_2(c, x, y) {
-  // c is compiled obj
-  // depends on x and y
-  const h = 0.0001;
-
-  parser.set('x', x + h);
-  const fxh = c.eval(parser.scope);
-  parser.set('x', x);
-  const fx = c.eval(parser.scope);
-
-  parser.set('y', y + h);
-  const fyh = c.eval(parser.scope);
-  parser.set('y', y);
-  const fy = c.eval(parser.scope);
-
-  return [(fxh - fx) / h, (fyh - fy) / h];
 }
 
 function rotation_matrix(rx, ry, rz) {
@@ -3335,7 +3245,7 @@ function Button(text, pos, callback) {
     return (mouse.x > this.pos.x && mouse.x < this.pos.x + this.width && Math.abs(mouse.y - this.pos.y) < this.height);
   };
 
-  this.mouse_up = function (evt) {
+  this.mouse_up = function () {
     if (this.hovering()) {
       // clicked
       if (this.callback) {
@@ -3516,7 +3426,7 @@ function Shape(color, path) {
     return false;
   };
 
-  this.mouse_down = function (evt) {
+  this.mouse_down = function () {
     if (this.hidden()) {
       return false;
     }
@@ -3531,7 +3441,7 @@ function Shape(color, path) {
     return false;
   };
 
-  this.mouse_drag = function (evt) {
+  this.mouse_drag = function () {
     if (this.selected_indices.length > 0) {
       const props = this.properties[frame];
       const { path } = props;
@@ -3551,7 +3461,7 @@ function Shape(color, path) {
     }
   };
 
-  this.mouse_up = function (evt) {
+  this.mouse_up = function () {
     if (!shift) {
       this.selected_indices = [];
     }
