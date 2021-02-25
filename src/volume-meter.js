@@ -43,7 +43,7 @@ var mediaStreamSource;
 var meter;
 var meterInitialized = false;
 
-function initVolumeMeter() {
+export function initVolumeMeter() {
 	// volume meter
     // monkeypatch Web Audio
 	window.AudioContext = window.AudioContext || window.webkitAudioContext;
