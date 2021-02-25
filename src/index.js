@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import math from 'mathjs';
 
 // colors
 var gray = "#cccccc";
