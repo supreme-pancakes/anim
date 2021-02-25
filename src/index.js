@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { create, all } from 'mathjs';
-import { saveAs } from './FileSaver';
+import { saveAs } from 'file-saver';
 import { initVolumeMeter } from './volume-meter';
 
 const math = create(all);
