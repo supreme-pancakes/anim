@@ -1,5 +1,9 @@
 import $ from 'jquery';
-import math from 'mathjs';
+import { create, all } from 'mathjs';
+import { saveAs } from './FileSaver';
+import { initVolumeMeter } from './volume-meter';
+
+const math = create(all);
 
 // colors
 var gray = "#cccccc";
@@ -627,7 +631,7 @@ math.import({
 
         return m;
     },
-    rotate: function(rx, ry, rz) { // rotates the camera
+    rotateCamera: function(rx, ry, rz) { // rotates the camera
         let rxyz = [rx, ry, rz];
         if (!isNaN(math.sum(rxyz))) {
             cam.properties[frame].rxyz = rxyz;
