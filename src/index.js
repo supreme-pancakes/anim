@@ -1,4 +1,5 @@
 import math from './math';
+import $ from './jquery-3.2.1.min';
 import { saveAs } from './FileSaver';
 
 // colors
