@@ -72,6 +72,7 @@ let mouse = { x: 0, y: 0 };
 let mouseLast = { x: 0, y: 0 };
 let mouseStart = { x: 0, y: 0 };
 let mouseGrid = { x: 0, y: 0 };
+let mouseGridLast = { x: 0, y: 0 };
 let mouseGraph = { x: 0, y: 0 };
 
 const brackets = {
@@ -3450,8 +3451,8 @@ function Shape(color, path) {
       if (tool === 'select') {
         // move all
         const offset = {
-          x: mouseGrid.x - mouse_grid_last.x,
-          y: mouseGrid.y - mouse_grid_last.y,
+          x: mouseGrid.x - mouseGridLast.x,
+          y: mouseGrid.y - mouseGridLast.y,
         };
         for (let i = 0; i < this.selected_indices.length; i++) {
           const idx = this.selected_indices[i];
@@ -3766,8 +3767,8 @@ function Circle(color, pos) {
       // move
       const props = this.properties[frame];
       const offset = {
-        x: mouseGrid.x - mouse_grid_last.x,
-        y: mouseGrid.y - mouse_grid_last.y,
+        x: mouseGrid.x - mouseGridLast.x,
+        y: mouseGrid.y - mouseGridLast.y,
       };
       const { p } = props;
       this.properties[frame].p = { x: p.x + offset.x, y: p.y + offset.y };
@@ -4504,7 +4505,7 @@ function Text(text, pos) {
     } else if (tool === 'select' && (this.near_mouse || this.is_selected())) {
       // shift it
       const { p } = props;
-      const offset = { x: mouseGrid.x - mouse_grid_last.x, y: mouseGrid.y - mouse_grid_last.y };
+      const offset = { x: mouseGrid.x - mouseGridLast.x, y: mouseGrid.y - mouseGridLast.y };
       props.p = { x: p.x + offset.x, y: p.y + offset.y };
 
       return true;
@@ -5105,8 +5106,8 @@ function Network(pos) {
       // move
       const props = this.properties[frame];
       const offset = {
-        x: mouseGrid.x - mouse_grid_last.x,
-        y: mouseGrid.y - mouse_grid_last.y,
+        x: mouseGrid.x - mouseGridLast.x,
+        y: mouseGrid.y - mouseGridLast.y,
       };
       const { p } = props;
       this.properties[frame].p = { x: p.x + offset.x, y: p.y + offset.y };
@@ -5393,7 +5394,7 @@ function Camera() {
     } else {
       // translate
       const { p } = props;
-      const offset = { x: mouseGrid.x - mouse_grid_last.x, y: mouseGrid.y - mouse_grid_last.y };
+      const offset = { x: mouseGrid.x - mouseGridLast.x, y: mouseGrid.y - mouseGridLast.y };
       props.p = { x: p.x + offset.x, y: p.y + offset.y };
     }
   };
@@ -6248,19 +6249,19 @@ function drawAxes(ctx) {
 
   ctx.save();
 
-  csys_style = cam.style();
+  const csysStyle = cam.style();
   props = cam.properties[frame];
 
   // do a fade in and out
   if (transition.transitioning) {
-    csys_next_style = cam.properties[nextFrame].style;
+    const csysNextStyle = cam.properties[nextFrame].style;
 
-    if (csys_next_style != null && csys_next_style != csys_style) {
+    if (csysNextStyle != null && csysNextStyle != csysStyle) {
       // changing text
       const constrained = constrain(tEase);
       ctx.globalAlpha = Math.cos(constrained * 2 * Math.PI) / 2 + 0.5;
       if (constrained >= 0.5) {
-        csys_style = csys_next_style;
+        csysStyle = csysNextStyle;
         if (cam.properties[nextFrame]) {
           props = cam.properties[nextFrame];
         }
@@ -6268,11 +6269,11 @@ function drawAxes(ctx) {
     }
   }
 
-  if (csys_style == '3d' || csys_style == 'flat') {
+  if (csysStyle == '3d' || csysStyle == 'flat') {
     // draw gridlines
     ctx.strokeStyle = '#DDDDDD';
 
-    if (csys_style == '3d') {
+    if (csysStyle == '3d') {
       let axis = cam.ticks[0];
       axis = math.matrix(axis);
       axis = cam.graph_to_screen_mat(axis);
@@ -6845,7 +6846,7 @@ window.onload = function () {
     }
 
     mouseLast = getMousePos(c, evt);
-    mouse_grid_last = constrainToGrid(mouse);
+    mouseGridLast = constrainToGrid(mouse);
   };
 
   window.onmouseup = function (evt) {
