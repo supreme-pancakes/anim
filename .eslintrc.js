@@ -10,5 +10,6 @@ module.exports = {
   },
   rules: {
     'no-plusplus': 0,
+    'import/prefer-default-export': 0,
   },
 };
