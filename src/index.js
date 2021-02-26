@@ -168,7 +168,7 @@ function graph(fn, d1, d2, d3) { // graphs y=f(x) from -10 to 10
       continue;
     }
 
-    if (i == 0) {
+    if (i === 0) {
       ctx.moveTo(p[0], p[1]);
     } else {
       ctx.lineTo(p[0], p[1]);
@@ -206,7 +206,7 @@ function para(r, tmin, tmax, units) { // graphs x=f(t) y=g(t) z=h(t) from tmin t
   ctx.beginPath();
   for (let i = 0; i < N; i++) {
     p = points[i];
-    if (i == 0) {
+    if (i === 0) {
       ctx.moveTo(p[0], p[1]);
     } else {
       ctx.lineTo(p[0], p[1]);
@@ -578,7 +578,7 @@ math.import({
   },
   randn() { // no args: random normal, 1 arg shape: dims of matrix to return
     const N = arguments.length;
-    if (N == 1) {
+    if (N === 1) {
       const shape = arguments[0];
       let m = cached(shape._data);
       m = m.map(() => randNBm());
@@ -643,7 +643,7 @@ math.import({
     const camData = cam.graph_to_screen_mat(points);
 
     ctx.save();
-    if (arguments.length == 3) {
+    if (arguments.length === 3) {
       // gradation
 
       const indices = new Array(n);
@@ -728,7 +728,7 @@ math.import({
     let p;
     for (let i = 0; i < N; i++) {
       p = points[i];
-      if (i == 0) {
+      if (i === 0) {
         ctx.moveTo(p[0], p[1]);
       } else {
         ctx.lineTo(p[0], p[1]);
@@ -795,21 +795,21 @@ math.import({
       x = a._data[0];
       y = a._data[1];
 
-      if (a.size()[0] == 3) {
+      if (a.size()[0] === 3) {
         z = a._data[2];
       }
     } else {
       _x = a._data[0];
       _y = a._data[1];
 
-      if (a.size()[0] == 3) {
+      if (a.size()[0] === 3) {
         _z = a._data[2];
       }
 
       x = b._data[0];
       y = b._data[1];
 
-      if (b.size()[0] == 3) {
+      if (b.size()[0] === 3) {
         z = b._data[2];
       }
     }
@@ -856,7 +856,7 @@ math.import({
       x = x.map((value) => prettyRound(value));
 
       const d = x._data;
-      if (x._size.length == 1) {
+      if (x._size.length === 1) {
         t = [d.join(' ')];
       } else {
         for (let r = 0; r < d.length; r++) {
@@ -917,7 +917,7 @@ math.import({
       }
     }
 
-    if (arguments.length >= 3 && _uv == true) {
+    if (arguments.length >= 3 && _uv === true) {
       uv = true;
     }
 
@@ -952,7 +952,7 @@ math.import({
       }
     }
 
-    if (arguments.length >= 4 && _uv == true) {
+    if (arguments.length >= 4 && _uv === true) {
       uv = true;
     }
 
@@ -1008,7 +1008,7 @@ math.import({
 
         const p = r(u, v)._data;
         const camp = cam.graph_to_screen(p[0], p[1], p[2]);
-        if (v == 0) {
+        if (v === 0) {
           ctx.moveTo(camp[0], camp[1]);
         } else {
           ctx.lineTo(camp[0], camp[1]);
@@ -1025,7 +1025,7 @@ math.import({
         u = _urs + du * j;
         const p = r(u, v)._data;
         const camp = cam.graph_to_screen(p[0], p[1], p[2]);
-        if (u == 0) {
+        if (u === 0) {
           ctx.moveTo(camp[0], camp[1]);
         } else {
           ctx.lineTo(camp[0], camp[1]);
@@ -1052,7 +1052,7 @@ math.import({
     ctx.restore();
   },
   integral(f, a, b, _n) {
-    if (a == b) {
+    if (a === b) {
       return 0;
     }
 
@@ -1140,7 +1140,7 @@ math.import({
 
           ctx.strokeStyle = 'black';
 
-          if (highConn.length == 0) {
+          if (highConn.length === 0) {
             const dx1 = p[0] - mouse.x;
             const dy1 = p[1] - mouse.y;
 
@@ -1180,18 +1180,18 @@ math.import({
         ctx.strokeStyle = 'black';
 
         // if we have a highlighted connection and we're in the right layer
-        if (highConn.length != 0) {
-          if (highConn[2] == j) {
-            if (highConn[0] == i) {
-              if (j == 0) {
+        if (highConn.length !== 0) {
+          if (highConn[2] === j) {
+            if (highConn[0] === i) {
+              if (j === 0) {
                 ctx.strokeStyle = colors[1];
               } else {
                 ctx.strokeStyle = colors[2];
               }
             }
-          } else if (highConn[2] == j - 1) {
-            if (highConn[1] == i) {
-              if (j == 0) {
+          } else if (highConn[2] === j - 1) {
+            if (highConn[1] === i) {
+              if (j === 0) {
                 ctx.strokeStyle = colors[1];
               } else {
                 ctx.strokeStyle = colors[2];
@@ -1203,7 +1203,7 @@ math.import({
           const dy = mouse.y - p[1];
 
           if (dx * dx + dy * dy < 400) {
-            if (j == 0) {
+            if (j === 0) {
               ctx.strokeStyle = colors[1];
             } else {
               ctx.strokeStyle = colors[2];
@@ -1232,7 +1232,7 @@ math.import({
   elefield(charges, location) { // charges = [q1, x1, y1, z1, q2, x2, y2, z2, etc.], provide location for field there
     charges = charges._data;
 
-    if (arguments.length == 1) {
+    if (arguments.length === 1) {
       n = 5;
       const d = 20 / n;
       let p = [0, 0];
@@ -1277,7 +1277,7 @@ math.import({
                 }
               }
 
-              if (dead == false) {
+              if (dead === false) {
                 p = cam.graph_to_screen(xp, yp, zp);
                 ctx.strokeStyle = rgbToHex([math.round((pl - j) / pl * 255), 0, math.round(j / pl * 255)]);
                 ctx.lineTo(p[0], p[1]);
@@ -1287,7 +1287,7 @@ math.import({
           }
         }
       }
-    } else if (arguments.length == 2) {
+    } else if (arguments.length === 2) {
       // calculate field at the provided location
       loc = location._data;
 
@@ -1334,7 +1334,7 @@ math.import({
 
     // add up forces from charges
     for (let i = 0; i < charges.length; i += 4) {
-      if (i == j * 4) {
+      if (i === j * 4) {
         continue;
       }
 
@@ -1389,7 +1389,7 @@ math.import({
       ctx.fillStyle = 'black';
       for (let n = 0; n < highNeur.length; n++) {
         const highn = highNeur[n];
-        if (highn[1] == 1 && highn[0] == i) {
+        if (highn[1] === 1 && highn[0] === i) {
           ctx.fillStyle = colors[2];
         }
       }
@@ -1402,7 +1402,7 @@ math.import({
     ctx.translate(rsize[0] + pad * 3, 0);
     drawMatrix(Wformat, (i, j) => {
       ctx.fillStyle = 'black';
-      if (highConn.length && highConn[0] == j && highConn[1] == i) {
+      if (highConn.length && highConn[0] === j && highConn[1] === i) {
         ctx.fillStyle = colors[3];
       }
     });
@@ -1416,7 +1416,7 @@ math.import({
 
       for (let n = 0; n < highNeur.length; n++) {
         const highn = highNeur[n];
-        if (highn[1] == 0 && highn[0] == i) {
+        if (highn[1] === 0 && highn[0] === i) {
           ctx.fillStyle = colors[1];
         }
       }
@@ -1451,7 +1451,7 @@ math.import({
       ctx.fillStyle = 'black';
       for (let n = 0; n < highNeur.length; n++) {
         const highn = highNeur[n];
-        if (highn[1] == 1 && highn[0] == i) {
+        if (highn[1] === 1 && highn[0] === i) {
           ctx.fillStyle = 'red';
         }
       }
@@ -2428,7 +2428,7 @@ math.import({
   factors(n) { // list positive factors of n
     f = [];
     for (let i = 0; i <= n / 2; i++) {
-      if (n / i % 1 == 0) {
+      if (n / i % 1 === 0) {
         f.push(i);
       }
     }
@@ -2446,7 +2446,7 @@ math.import({
     for (let i = 0; i < factors._size[0]; i++) {
       const num = d[i];
       const f = math.factors(num);
-      if (f._size[0] == 1 || f._size[0] == 2) {
+      if (f._size[0] === 1 || f._size[0] === 2) {
         // prime
         primes.push(num);
       }
@@ -2544,19 +2544,19 @@ function drawR(o, p, d) {
       text = o.op;
     }
 
-    if (text == '+' || text == '-' || text == '*') {
-      if (argc == 1) {
+    if (text === '+' || text === '-' || text === '*') {
+      if (argc === 1) {
         if (d) ctx.fillText(text, p.x, p.y);
         const s1 = drawR(args[0], { x: p.x + charSize, y: p.y }, d);
 
         size.w = s1.w + charSize;
         size.h = s1.h;
-      } else if (argc == 2) {
+      } else if (argc === 2) {
         // draw on the left and the right
 
         const center = false; // false -> bottom align
         let pad2 = charPad * 2;
-        if (text == '*') {
+        if (text === '*') {
           pad2 = 0;
         }
 
@@ -2579,7 +2579,7 @@ function drawR(o, p, d) {
             s2 = drawR(args[1], { x: p.x + s1.w + pad2 + text.length * charSize + pad2, y: p.y + size.h - s2.h }, d);
           }
 
-          if (text == '*') {
+          if (text === '*') {
             ctx.beginPath();
             ctx.arc(opp.x + charSize / 2, opp.y + charSize, 3, 0, pi2);
             ctx.fill();
@@ -2588,8 +2588,8 @@ function drawR(o, p, d) {
           }
         }
       }
-    } else if (text == '^') {
-      if (argc == 2) {
+    } else if (text === '^') {
+      if (argc === 2) {
         // draw on the left and the right, shifted up!
         const a = args[0];
         let b = args[1];
@@ -2609,8 +2609,8 @@ function drawR(o, p, d) {
           drawR(b, { x: p.x + s1.w, y: p.y }, d);
         }
       }
-    } else if (text == '/') {
-      if (argc == 2) {
+    } else if (text === '/') {
+      if (argc === 2) {
         // draw on top and bottom
         let a = args[0]; let b = args[1];
 
@@ -2639,7 +2639,7 @@ function drawR(o, p, d) {
           ctx.stroke();
         }
       }
-    } else if (text == '!') {
+    } else if (text === '!') {
       const s1 = drawR(args[0], { x: p.x, y: p.y }, d);
       if (d) ctx.fillText(text, p.x + s1.w, p.y);
 
@@ -2677,7 +2677,7 @@ function drawR(o, p, d) {
         const s1 = drawR(args[i], { x: p.x + xo, y: p.y + size.h / 2 - hs[i].h / 2 }, d);
         xo += s1.w;
 
-        if (i == N - 1) {
+        if (i === N - 1) {
           if (d) ctx.fillText(')', p.x + xo, cally);
         } else if (d) ctx.fillText(',', p.x + xo, cally);
 
@@ -2755,7 +2755,7 @@ function drawR(o, p, d) {
         const s1 = drawR(items[i], { x: p.x + xo, y: p.y + size.h / 2 - hs[i].h / 2 }, d);
         xo += s1.w;
 
-        if (i != N - 1) {
+        if (i !== N - 1) {
           if (d) ctx.fillText(';', p.x + xo, cally);
         }
         xo += charSize;
@@ -2790,7 +2790,7 @@ function drawR(o, p, d) {
         const s1 = drawR(items[i], { x: p.x + xo, y: p.y + size.h / 2 - hs[i].h / 2 }, d);
         xo += s1.w;
 
-        if (i != N - 1) {
+        if (i !== N - 1) {
           if (d) ctx.fillText(',', p.x + xo, cally);
         }
         xo += charSize;
@@ -2882,7 +2882,7 @@ function drawBrackets(sx, sy, width, height) {
 
 function drawSimple(text) {
   for (let i = 0; i < text.length; i++) {
-    if (text[i] == '*') {
+    if (text[i] === '*') {
       ctx.beginPath();
       ctx.arc(i * charSize + charSize / 2, 0, 3, 0, pi2);
       ctx.fill();
@@ -2965,7 +2965,7 @@ function drawFn(fn) {
 }
 
 function matrixSize(matrix) {
-  if (matrix && matrix.length == 0) {
+  if (matrix && matrix.length === 0) {
     return;
   }
 
@@ -3003,7 +3003,7 @@ function drawMatrix(matrix, colorIJ) {
 }
 
 function formatMatrix(matrix) {
-  if (matrix.length == 0) {
+  if (matrix.length === 0) {
     return null;
   }
 
@@ -3125,17 +3125,17 @@ function hexToRgb(hex) {
 }
 
 function transformProps(key, props, step = 0.2) {
-  if (key == 'l') {
+  if (key === 'l') {
     props.w += step;
-  } else if (key == 'j') {
+  } else if (key === 'j') {
     props.w -= step;
-  } else if (key == 'i') {
+  } else if (key === 'i') {
     props.h += step;
-  } else if (key == 'k') {
+  } else if (key === 'k') {
     props.h -= step;
-  } else if (key == 'u') {
+  } else if (key === 'u') {
     props.r -= Math.PI / 12;
-  } else if (key == 'o') {
+  } else if (key === 'o') {
     props.r += Math.PI / 12;
   }
 
@@ -3149,7 +3149,7 @@ function interpolate(a, b) {
 
   const interp = {};
   for (key in a) {
-    if (key == 'p') {
+    if (key === 'p') {
       // interpolate position
       const ap = a[key];
       const bp = b[key];
@@ -3158,24 +3158,24 @@ function interpolate(a, b) {
         x: (1 - tEase) * ap.x + tEase * bp.x,
         y: (1 - tEase) * ap.y + tEase * bp.y,
       };
-    } else if (key == 'w' || key == 'h' || key == 'r' || key == 'a_s' || key == 'a_e') {
+    } else if (key === 'w' || key === 'h' || key === 'r' || key === 'a_s' || key === 'a_e') {
       // interpolate width, height, or rotation
       const aw = a[key];
       const bw = b[key];
       interp[key] = (1 - tEase) * aw + tEase * bw;
-    } else if (key == 'rxyz') {
+    } else if (key === 'rxyz') {
       const ar = a[key];
       const br = b[key];
       interp[key] = [0, 0, 0];
       for (let i = 0; i < 3; i++) {
         interp[key][i] = (1 - tEase) * ar[i] + tEase * br[i];
       }
-    } else if (key == 'c') {
+    } else if (key === 'c') {
       // interpolate colors
       const ac = a[key];
       const bc = b[key];
       interp[key] = interpolateColors(ac, bc, constrain(tEase));
-    } else if (key == 'path') {
+    } else if (key === 'path') {
       // interpolate paths
       const ap = a[key];
       const bp = b[key];
@@ -3190,7 +3190,7 @@ function interpolate(a, b) {
       }
 
       interp[key] = ip;
-    } else if (key == 't') {
+    } else if (key === 't') {
       if (tEase < 0.5) {
         interp[key] = a[key];
       } else {
@@ -3208,7 +3208,7 @@ function interpolateColors(ac, bc, interp) {
   let same = true;
   const N = ac.length;
   for (let i = 0; i < N; i++) {
-    if (ac[i] != bc[i]) {
+    if (ac[i] !== bc[i]) {
       same = false;
     }
   }
@@ -3237,7 +3237,7 @@ function Button(text, pos, callback) {
   this.width = text.length * gridSize / 4;
   this.height = gridSize / 4;
 
-  if (this.width == 0) {
+  if (this.width === 0) {
     this.width = gridSize;
   }
 
@@ -3290,7 +3290,7 @@ function Shape(color, path) {
   this.selected_indices = [];
 
   this.duplicate = function () {
-    if (this.selected_indices.length == 0) {
+    if (this.selected_indices.length === 0) {
       return;
     }
 
@@ -3310,7 +3310,7 @@ function Shape(color, path) {
       return true;
     }
 
-    return this.properties[frame].c[3] == 0;
+    return this.properties[frame].c[3] === 0;
   };
 
   this.copy_properties = function (f, n) {
@@ -3318,8 +3318,8 @@ function Shape(color, path) {
   };
 
   this.hide = function () {
-    if (this.selected_indices.length != 0) {
-      if (this.properties[frame].c[3] == 1) {
+    if (this.selected_indices.length !== 0) {
+      if (this.properties[frame].c[3] === 1) {
         this.properties[frame].c[3] = 0;
       } else {
         this.properties[frame].c[3] = 1;
@@ -3340,7 +3340,7 @@ function Shape(color, path) {
   };
 
   this.set_color = function (rgba) {
-    if (this.selected_indices.length != 0) {
+    if (this.selected_indices.length !== 0) {
       rgba[3] = this.properties[frame].c[3];
       this.properties[frame].c = rgba;
     }
@@ -3351,19 +3351,19 @@ function Shape(color, path) {
   };
 
   this.clear_all_props = function () {
-    if (this.selected_indices.length == 0) {
+    if (this.selected_indices.length === 0) {
       return;
     }
 
     for (const key in this.properties) {
-      if (key != frame) {
+      if (key !== frame) {
         delete this.properties[key];
       }
     }
   };
 
   this.del_props_before = function () {
-    if (this.selected_indices.length == 0) {
+    if (this.selected_indices.length === 0) {
       return;
     }
 
@@ -3419,7 +3419,7 @@ function Shape(color, path) {
   this.onkeydown = function (evt) {
     const { key } = evt;
 
-    if (this.selected_indices.length != 0) {
+    if (this.selected_indices.length !== 0) {
       this.properties[frame] = transformProps(key, this.properties[frame]);
     }
 
@@ -3433,7 +3433,7 @@ function Shape(color, path) {
 
     // try to selected one
     const idx = this.closest_point_idx();
-    if (idx != -1) {
+    if (idx !== -1) {
       this.selected_indices = [idx];
       return true;
     }
@@ -3446,7 +3446,7 @@ function Shape(color, path) {
       const props = this.properties[frame];
       const { path } = props;
 
-      if (tool == 'select') {
+      if (tool === 'select') {
         // move all
         const offset = {
           x: mouseGrid.x - mouse_grid_last.x,
@@ -3507,14 +3507,14 @@ function Shape(color, path) {
     for (let i = 0; i < path.length; i++) {
       const p = path[i];
 
-      if (i == 0) {
+      if (i === 0) {
         ctx.moveTo(p.x - c.x, p.y - c.y);
       } else {
         ctx.lineTo(p.x - c.x, p.y - c.y);
       }
 
       // show selected indices
-      if (!presenting && !hidden && (this.selected_indices.indexOf(i) != -1 || i == idx)) {
+      if (!presenting && !hidden && (this.selected_indices.indexOf(i) !== -1 || i === idx)) {
         ctx.strokeStyle = dark;
         ctx.strokeRect(p.x - c.x - gridSize / 2, p.y - c.y - gridSize / 2, gridSize, gridSize);
       }
@@ -3572,7 +3572,7 @@ function Shape(color, path) {
     for (let i = 0; i < path.length; i++) {
       const p = path[i];
 
-      if (i == 0) {
+      if (i === 0) {
         js += `ctx.moveTo(${p.x - c.x}, ${p.y - c.y});\n`;
       } else {
         js += `ctx.lineTo(${p.x - c.x}, ${p.y - c.y});\n`;
@@ -3632,7 +3632,7 @@ function Circle(color, pos) {
       return true;
     }
 
-    return this.properties[frame].c[3] == 0;
+    return this.properties[frame].c[3] === 0;
   };
 
   this.copy_properties = function (f, n) {
@@ -3653,7 +3653,7 @@ function Circle(color, pos) {
 
   this.hide = function () {
     if (this.selected) {
-      if (this.properties[frame].c[3] == 1) {
+      if (this.properties[frame].c[3] === 1) {
         this.properties[frame].c[3] = 0;
       } else {
         this.properties[frame].c[3] = 1;
@@ -3679,7 +3679,7 @@ function Circle(color, pos) {
     }
 
     for (const key in this.properties) {
-      if (key != frame) {
+      if (key !== frame) {
         delete this.properties[key];
       }
     }
@@ -3730,13 +3730,13 @@ function Circle(color, pos) {
     if (ctrl) {
       const p = this.properties[frame];
       const step = Math.PI / 12;
-      if (key == 'u') {
+      if (key === 'u') {
         p.a_s += step;
-      } else if (key == 'o') {
+      } else if (key === 'o') {
         p.a_s -= step;
-      } else if (key == 'j') {
+      } else if (key === 'j') {
         p.a_e -= step;
-      } else if (key == 'l') {
+      } else if (key === 'l') {
         p.a_e += step;
       }
     } else {
@@ -3761,7 +3761,7 @@ function Circle(color, pos) {
   };
 
   this.mouse_drag = function (evt) {
-    if (this.selected && tool == 'select') {
+    if (this.selected && tool === 'select') {
       // move
       const props = this.properties[frame];
       const offset = {
@@ -3841,7 +3841,7 @@ function Circle(color, pos) {
 
     ctx.restore();
 
-    if (!presenting && props.c[3] != 0 && (this.selected || this.near_mouse())) {
+    if (!presenting && props.c[3] !== 0 && (this.selected || this.near_mouse())) {
       ctx.beginPath();
       ctx.strokeStyle = dark;
       ctx.strokeRect(props.p.x - gridSize / 4, props.p.y - gridSize / 4, gridSize / 2, gridSize / 2);
@@ -3903,7 +3903,7 @@ function Text(text, pos) {
   };
 
   this.is_text_selected = function () {
-    return this.cursor != this.cursor_selection;
+    return this.cursor !== this.cursor_selection;
   };
 
   this.replace_selected_text = function (replace) {
@@ -3979,7 +3979,7 @@ function Text(text, pos) {
 
   this.hide = function () {
     if (this.selected) {
-      if (this.properties[frame].c[3] == 1) {
+      if (this.properties[frame].c[3] === 1) {
         this.properties[frame].c[3] = 0;
       } else {
         this.properties[frame].c[3] = 1;
@@ -3999,7 +3999,7 @@ function Text(text, pos) {
     }
 
     for (const key in this.properties) {
-      if (key != frame) {
+      if (key !== frame) {
         delete this.properties[key];
       }
     }
@@ -4021,10 +4021,10 @@ function Text(text, pos) {
     }
 
     if (transition.transitioning) {
-      return this.properties[frame].c[3] == 0 && this.properties[nextFrame].c[3] == 0;
+      return this.properties[frame].c[3] === 0 && this.properties[nextFrame].c[3] === 0;
     }
 
-    return this.properties[frame].c[3] == 0;
+    return this.properties[frame].c[3] === 0;
   };
 
   this.in_rect = function (x, y, x2, y2) {
@@ -4055,7 +4055,7 @@ function Text(text, pos) {
 
     const { t } = this.properties[frame];
 
-    if (t.indexOf('visnet') != -1) {
+    if (t.indexOf('visnet') !== -1) {
       // very hacky but it works.. :-)
 
       const { p } = this.properties[frame];
@@ -4079,7 +4079,7 @@ function Text(text, pos) {
     const { p } = this.properties[frame];
 
     // if its a matrix split that up too
-    if (this.matrix_vals.length != 0) {
+    if (this.matrix_vals.length !== 0) {
       // create a bunch of matrix numbers
       const pad = 24;
 
@@ -4107,7 +4107,7 @@ function Text(text, pos) {
     let xoff = 0;
     for (let i = 0; i < N; i++) {
       const c = t[i];
-      if (c == ' ') {
+      if (c === ' ') {
         xoff += gridSize / 2;
         continue;
       }
@@ -4134,7 +4134,7 @@ function Text(text, pos) {
 
     if (meta || ctrl) {
       if (this.is_selected()) {
-        if (key == 'c') {
+        if (key === 'c') {
           // copy
           textCopied = this.text_selected();
 
@@ -4147,10 +4147,10 @@ function Text(text, pos) {
           document.body.removeChild(el);
 
           return true;
-        } if (key == 'v') {
+        } if (key === 'v') {
           // paste, let event take over
           return false;
-        } if (key == 'a') {
+        } if (key === 'a') {
           // select all
           this.cursor = this.properties[frame].t.length;
           this.cursor_selection = 0;
@@ -4165,15 +4165,15 @@ function Text(text, pos) {
       // auto complete
       const fn = text.split(/[^A-Za-z]/).pop();
 
-      if (fn.length != 0) {
+      if (fn.length !== 0) {
         const keys = Object.keys(math);
 
         for (let i = 0; i < keys.length; i++) {
           const key = keys[i];
 
-          if (key.indexOf(fn) == 0) {
+          if (key.indexOf(fn) === 0) {
             let newText = text.split(fn)[0] + keys[i];
-            if ((`${math[key]}`).split('\n')[0].indexOf('(') != -1) {
+            if ((`${math[key]}`).split('\n')[0].indexOf('(') !== -1) {
               newText += '(';
             }
 
@@ -4188,12 +4188,12 @@ function Text(text, pos) {
       return true;
     }
 
-    if (key == 'Escape') {
+    if (key === 'Escape') {
       this.selected = false;
       return false;
     }
 
-    if (key == 'Enter') {
+    if (key === 'Enter') {
       this.selected = false;
       this.eval();
       if (shift) {
@@ -4212,20 +4212,20 @@ function Text(text, pos) {
 
     if (!shift && this.is_text_selected()) {
       const s = this.selection_indices();
-      if (key == 'ArrowRight') {
+      if (key === 'ArrowRight') {
         this.cursor = s.e;
-      } else if (key == 'ArrowLeft') {
+      } else if (key === 'ArrowLeft') {
         this.cursor = s.s;
       }
-    } else if (key == 'ArrowRight') {
+    } else if (key === 'ArrowRight') {
       this.cursor += 1;
-    } else if (key == 'ArrowLeft') {
+    } else if (key === 'ArrowLeft') {
       this.cursor -= 1;
     }
 
-    if (key == 'ArrowUp') {
+    if (key === 'ArrowUp') {
       // find text above
-      const texts = objs.filter((o) => o.type == 'Text');
+      const texts = objs.filter((o) => o.type === 'Text');
 
       texts.sort((a, b) => {
         const ap = a.properties[frame].p;
@@ -4234,7 +4234,7 @@ function Text(text, pos) {
       });
 
       const i = guidIndex(texts, this);
-      if (i == 0) {
+      if (i === 0) {
         return true;
       }
 
@@ -4242,9 +4242,9 @@ function Text(text, pos) {
       newObj.selected = true;
       this.selected = false;
       return true;
-    } if (key == 'ArrowDown') {
+    } if (key === 'ArrowDown') {
       // find text below
-      const texts = objs.filter((o) => o.type == 'Text');
+      const texts = objs.filter((o) => o.type === 'Text');
 
       texts.sort((a, b) => {
         const ap = a.properties[frame].p;
@@ -4253,7 +4253,7 @@ function Text(text, pos) {
       });
 
       const i = guidIndex(texts, this);
-      if (i == texts.length - 1) {
+      if (i === texts.length - 1) {
         return true;
       }
 
@@ -4263,7 +4263,7 @@ function Text(text, pos) {
       return true;
     }
 
-    if (key == 'Backspace') {
+    if (key === 'Backspace') {
       if (!this.is_text_selected()) {
         this.cursor_selection = this.cursor - 1;
         this.constrain_cursors();
@@ -4271,7 +4271,7 @@ function Text(text, pos) {
       } else {
         text = this.replace_selected_text('');
       }
-    } else if (key.length == 1) {
+    } else if (key.length === 1) {
       // type character
       if (this.is_text_selected()) {
         text = this.replace_selected_text(key);
@@ -4281,7 +4281,7 @@ function Text(text, pos) {
       }
     }
 
-    if (!shift || (key != 'ArrowRight' && key != 'ArrowLeft')) {
+    if (!shift || (key !== 'ArrowRight' && key !== 'ArrowLeft')) {
       this.cursor_selection = this.cursor;
     }
 
@@ -4327,7 +4327,7 @@ function Text(text, pos) {
     ctx.globalAlpha = i.c[3];
 
     if (transition.transitioning) {
-      if (a.t != b.t) {
+      if (a.t !== b.t) {
         // text is diff, cross fade result
         // ctx.globalAlpha = -math.cos(t_percent*2*math.PI-math.PI)/2 + .5;
         /*
@@ -4345,20 +4345,20 @@ function Text(text, pos) {
       // only display the value if its not an assignment or constant
       const opType = math.parse(this.args[0]).type;
 
-      if (opType.indexOf('Assignment') == -1 && opType != 'ConstantNode') {
+      if (opType.indexOf('Assignment') === -1 && opType !== 'ConstantNode') {
         const type = typeof val;
 
         // set display text
-        if (type == 'number') {
+        if (type === 'number') {
           if (ctrl) {
             // nothing
             this.text_val = `=${val}`;
           } else {
             this.text_val = `=${prettyRound(val)}`;
           }
-        } else if (type == 'boolean') {
+        } else if (type === 'boolean') {
           this.text_val = ` = ${val}`;
-        } else if (type == 'object' && val._data && val._data.length != 0) {
+        } else if (type === 'object' && val._data && val._data.length !== 0) {
           // prob a matrix, render entries
           this.matrix_vals = val._data;
           this.text_val = null;
@@ -4384,7 +4384,7 @@ function Text(text, pos) {
   };
 
   this.change_text = function (text) {
-    const changed = this.properties[frame].t != text;
+    const changed = this.properties[frame].t !== text;
 
     this.properties[frame].t = text;
     this.constrain_cursors();
@@ -4445,7 +4445,7 @@ function Text(text, pos) {
   };
 
   this.mouse_drag = function (evt) {
-    if (tool == 'camera') {
+    if (tool === 'camera') {
       return false;
     }
 
@@ -4461,7 +4461,7 @@ function Text(text, pos) {
     if (presenting) {
       if (this.args && this.args[0] && this.args[0]._data) {
 
-      } else if (this.command == 'slide' && this.point_in_text_rect(mouseStart)) {
+      } else if (this.command === 'slide' && this.point_in_text_rect(mouseStart)) {
         // change the value of the variable
         const varName = this.var_name();
 
@@ -4500,7 +4500,7 @@ function Text(text, pos) {
 
       this.constrain_cursors();
       this.dragged = true;
-    } else if (tool == 'select' && (this.near_mouse || this.is_selected())) {
+    } else if (tool === 'select' && (this.near_mouse || this.is_selected())) {
       // shift it
       const { p } = props;
       const offset = { x: mouseGrid.x - mouse_grid_last.x, y: mouseGrid.y - mouse_grid_last.y };
@@ -4538,7 +4538,7 @@ function Text(text, pos) {
   this.draw_text = function (ctx, t) {
     let size;
 
-    if (this.command == 'f' && !this.is_selected()) {
+    if (this.command === 'f' && !this.is_selected()) {
       const fn = t.slice(this.command.length + 1); // +1 for semicolon
       size = drawFn(fn);
     } else {
@@ -4556,13 +4556,13 @@ function Text(text, pos) {
 
       // draw red brackets
       ctx.save();
-      if (this.is_selected() && plevel != 0) {
+      if (this.is_selected() && plevel !== 0) {
         ctx.fillStyle = colors[1];
         let p2 = plevel;
         for (let i = this.cursor; i < N; i++) {
           if (t[i] in brackets) p2 += brackets[t[i]];
 
-          if (p2 == plevel - 1) {
+          if (p2 === plevel - 1) {
             ctx.fillText(t[i], i * charSize, 0);
             break;
           }
@@ -4572,7 +4572,7 @@ function Text(text, pos) {
         for (let i = this.cursor - 1; i >= 0; i--) {
           if (t[i] in brackets) p2 += brackets[t[i]];
 
-          if (p2 == plevel + 1) {
+          if (p2 === plevel + 1) {
             ctx.fillText(t[i], i * charSize, 0);
             break;
           }
@@ -4581,7 +4581,7 @@ function Text(text, pos) {
       ctx.restore();
     }
 
-    if (this.matrix_vals.length != 0) {
+    if (this.matrix_vals.length !== 0) {
       ctx.save();
       ctx.translate(size.w, 0);
       ctx.fillText('=', 0, 0);
@@ -4621,7 +4621,7 @@ function Text(text, pos) {
 
     if (!text) {
 
-    } else if (text.indexOf(':') != -1) {
+    } else if (text.indexOf(':') !== -1) {
       const split = text.split(':');
       this.command = split[0];
       this.args = [split[1]];
@@ -4646,7 +4646,7 @@ function Text(text, pos) {
   this.draw_tree = function (ctx, props) {
     ctx.save();
 
-    if (this.args.length != 1) {
+    if (this.args.length !== 1) {
       return;
     }
 
@@ -4658,7 +4658,7 @@ function Text(text, pos) {
 
     }
 
-    if (t == -1) {
+    if (t === -1) {
       return;
     }
 
@@ -4691,7 +4691,7 @@ function Text(text, pos) {
 
       for (let i = 0; i < stuff.length; i++) {
         const o = stuff[i];
-        if (o == ' ') {
+        if (o === ' ') {
           continue;
         }
 
@@ -4718,7 +4718,7 @@ function Text(text, pos) {
           ctx.fillText(text, np.x, np.y);
 
           for (let j = 0; j < o.args.length; j++) {
-            while (nextStuff[li] == ' ') {
+            while (nextStuff[li] === ' ') {
               lx += xoff;
               li += 1;
             }
@@ -4753,7 +4753,7 @@ function Text(text, pos) {
         }
       }
 
-      if (nextStuff.length == 0) {
+      if (nextStuff.length === 0) {
         break;
       }
 
@@ -4799,7 +4799,7 @@ function Text(text, pos) {
       i = a;
     }
 
-    if (i.c[3] == 0) {
+    if (i.c[3] === 0) {
       return;
     }
 
@@ -4822,7 +4822,7 @@ function Text(text, pos) {
     let shouldDrawText = true;
 
     const c = this.command;
-    if (c == 'tree') {
+    if (c === 'tree') {
       this.draw_tree(ctx, i);
       if (presenting) {
         shouldDrawText = false;
@@ -4841,8 +4841,8 @@ function Text(text, pos) {
     ctx.scale(i.w, i.h);
 
     // image display
-    if (i.t.indexOf('http') != -1 && (i.t.indexOf('png') != -1 || i.t.indexOf('jpg') != -1 || i.t.indexOf('gif') != -1 || i.t.indexOf('jpeg') != -1)) {
-      if (this.image == null || this.image.src != i.t) {
+    if (i.t.indexOf('http') !== -1 && (i.t.indexOf('png') !== -1 || i.t.indexOf('jpg') !== -1 || i.t.indexOf('gif') !== -1 || i.t.indexOf('jpeg') !== -1)) {
+      if (this.image === null || this.image.src !== i.t) {
         this.image = new Image();
         this.image.src = i.t;
       } else {
@@ -4854,8 +4854,8 @@ function Text(text, pos) {
         b = a;
       }
 
-      const fadingIn = (a.c[3] == 0 && b.c[3] == 1);
-      const fadingOut = (a.c[3] == 1 && b.c[3] == 0);
+      const fadingIn = (a.c[3] === 0 && b.c[3] === 1);
+      const fadingOut = (a.c[3] === 1 && b.c[3] === 0);
 
       let at = a.t;
       let bt = b.t;
@@ -4870,7 +4870,7 @@ function Text(text, pos) {
         }
       }
 
-      const text_different = at != bt;
+      const text_different = at !== bt;
 
       if (text_different && transition.transitioning) {
         // changing text
@@ -4885,7 +4885,7 @@ function Text(text, pos) {
       }
     }
 
-    if (c == 'slide' && presenting && this.near_mouse && !this.hidden()) {
+    if (c === 'slide' && presenting && this.near_mouse && !this.hidden()) {
       // draw slider rect
       this.draw_border(ctx);
     }
@@ -4916,14 +4916,14 @@ function Text(text, pos) {
         text = i.t.slice(0, this.cursor);
         const fn = text.split(/[^A-Za-z]/).pop();
 
-        if (fn.length != 0) {
+        if (fn.length !== 0) {
           const keys = Object.keys(math);
           let yoff = 0;
 
           for (let i = 0; i < keys.length; i++) {
             const key = keys[i];
 
-            if (key.indexOf(fn) == 0) {
+            if (key.indexOf(fn) === 0) {
               ctx.save();
               ctx.translate(0, charSize * 2 + yoff);
               ctx.scale(0.5, 0.5);
@@ -4954,7 +4954,7 @@ function Text(text, pos) {
     js += `ctx.fillStyle = "${rgbToHex(props.c)}";\n`;
 
     for (let i = 0; i < text.length; i++) {
-      if (text[i] == '*') {
+      if (text[i] === '*') {
         js += 'ctx.beginPath();\n';
         js += `ctx.arc(${i * charSize + charSize / 2}, 0, 3, 0, ${pi2});\n`;
         js += 'ctx.fill();\n';
@@ -4997,7 +4997,7 @@ function Network(pos) {
       return true;
     }
 
-    return this.properties[frame].c[3] == 0;
+    return this.properties[frame].c[3] === 0;
   };
 
   this.copy_properties = function (f, n) {
@@ -5018,7 +5018,7 @@ function Network(pos) {
 
   this.hide = function () {
     if (this.selected) {
-      if (this.properties[frame].c[3] == 1) {
+      if (this.properties[frame].c[3] === 1) {
         this.properties[frame].c[3] = 0;
       } else {
         this.properties[frame].c[3] = 1;
@@ -5044,7 +5044,7 @@ function Network(pos) {
     }
 
     for (const key in this.properties) {
-      if (key != frame) {
+      if (key !== frame) {
         delete this.properties[key];
       }
     }
@@ -5100,7 +5100,7 @@ function Network(pos) {
   };
 
   this.mouse_drag = function (evt) {
-    if (this.selected && tool == 'select') {
+    if (this.selected && tool === 'select') {
       // move
       const props = this.properties[frame];
       const offset = {
@@ -5170,7 +5170,7 @@ function Network(pos) {
 
           ctx.strokeStyle = 'black';
 
-          if (high_conn.length == 0) {
+          if (high_conn.length === 0) {
             const dx1 = p[0] - mouse.x;
             const dy1 = p[1] - mouse.y;
 
@@ -5210,18 +5210,18 @@ function Network(pos) {
         ctx.strokeStyle = 'black';
 
         // if we have a highlighted connection and we're in the right layer
-        if (high_conn.length != 0) {
-          if (high_conn[2] == j) {
-            if (high_conn[0] == i) {
-              if (j == 0) {
+        if (high_conn.length !== 0) {
+          if (high_conn[2] === j) {
+            if (high_conn[0] === i) {
+              if (j === 0) {
                 ctx.strokeStyle = 'blue';
               } else {
                 ctx.strokeStyle = 'red';
               }
             }
-          } else if (high_conn[2] == j - 1) {
-            if (high_conn[1] == i) {
-              if (j == 0) {
+          } else if (high_conn[2] === j - 1) {
+            if (high_conn[1] === i) {
+              if (j === 0) {
                 ctx.strokeStyle = 'blue';
               } else {
                 ctx.strokeStyle = 'red';
@@ -5233,7 +5233,7 @@ function Network(pos) {
           const dy = mouse.y - p[1];
 
           if (dx * dx + dy * dy < 400) {
-            if (j == 0) {
+            if (j === 0) {
               ctx.strokeStyle = 'blue';
             } else {
               ctx.strokeStyle = 'red';
@@ -5271,7 +5271,7 @@ function Network(pos) {
     ctx.beginPath();
     this.draw_network(props, ctx);
 
-    if (!presenting && props.c[3] != 0 && (this.selected || this.near_mouse())) {
+    if (!presenting && props.c[3] !== 0 && (this.selected || this.near_mouse())) {
       ctx.beginPath();
       ctx.strokeStyle = dark;
       ctx.strokeRect(props.p.x - gridSize / 4, props.p.y - gridSize / 4, gridSize / 2, gridSize / 2);
@@ -5299,14 +5299,14 @@ function Camera() {
     for (let i = 0; i < 2; i++) {
       for (let j = 0; j < N; j++) {
         const t = R._data[j];
-        if (i == 0) {
+        if (i === 0) {
           m.push([t, -tick_size, 0]);
           m.push([t, tick_size, 0]);
-        } else if (i == 1) {
+        } else if (i === 1) {
           // y axis
           m.push([-tick_size, t, 0]);
           m.push([tick_size, t, 0]);
-        } else if (i == 2) {
+        } else if (i === 2) {
           // z axis
           m.push([-tick_size, 0, t]);
           m.push([tick_size, 0, t]);
@@ -5360,7 +5360,7 @@ function Camera() {
   };
 
   this.mouse_drag = function (evt) {
-    if (tool != 'camera') {
+    if (tool !== 'camera') {
       return;
     }
 
@@ -5405,7 +5405,7 @@ function Camera() {
   };
 
   this.onkeydown = function (evt) {
-    if (tool != 'camera') {
+    if (tool !== 'camera') {
       return;
     }
 
@@ -5458,7 +5458,7 @@ function Camera() {
     const n = size[0];
     const d = size[1];
 
-    if (d == 2) {
+    if (d === 2) {
       // 2d
       // append zeros for zs
       p = p.resize([n, 3]);
@@ -5499,7 +5499,7 @@ function save_state() {
   const str = state_to_string();
   if (states.length > 0) {
     const last = states[states.length - 1];
-    if (str != last) {
+    if (str !== last) {
       states.push(str);
     }
   } else {
@@ -5518,7 +5518,7 @@ function guidIndex(objs, obj) {
   const N = objs.length;
   for (let i = 0; i < N; i++) {
     const tobj = objs[i];
-    if (tobj.guid == obj.guid) {
+    if (tobj.guid === obj.guid) {
       return i;
     }
   }
@@ -5601,11 +5601,11 @@ function text_array_to_objs(arr, keep_animation) {
     const o = arr[i];
     let new_obj = null;
 
-    if (o.type == 'Shape') {
+    if (o.type === 'Shape') {
       new_obj = new Shape();
-    } else if (o.type == 'Circle') {
+    } else if (o.type === 'Circle') {
       new_obj = new Circle();
-    } else if (o.type == 'Text') {
+    } else if (o.type === 'Text') {
       new_obj = new Text();
     }
 
@@ -5668,13 +5668,13 @@ function Frames(pos) {
     for (let i = 0; i < this.buttons.length; i++) {
       const btn = this.buttons[i];
       if (btn.mouse_up(evt)) {
-        if (i == this.buttons.length - 2) {
+        if (i === this.buttons.length - 2) {
           // remove frame
 
           // remove selected frame
           // copy properties from next frames
           // decrement number of frames
-          if (numFrames == 1) {
+          if (numFrames === 1) {
             break;
           }
 
@@ -5700,7 +5700,7 @@ function Frames(pos) {
           numFrames -= 1;
           this.create_buttons();
           return true;
-        } if (i == this.buttons.length - 1) {
+        } if (i === this.buttons.length - 1) {
           // add frame
           // copy to next from frame
           insert_frame();
@@ -5714,7 +5714,7 @@ function Frames(pos) {
   this.onkeydown = function (evt) {
     const { key } = evt;
 
-    if (key == 'ArrowRight') {
+    if (key === 'ArrowRight') {
       if (!presenting && frame + 1 > numFrames) {
         // create a new one
         insert_frame();
@@ -5722,12 +5722,12 @@ function Frames(pos) {
 
       transition_with_next(loop_frame(frame + 1));
       return true;
-    } if (key == 'ArrowLeft') {
+    } if (key === 'ArrowLeft') {
       transition_with_next(loop_frame(frame - 1));
       return true;
     }
 
-    if ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].indexOf(Number(key)) != -1) {
+    if ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].indexOf(Number(key)) !== -1) {
       if (!transition.transitioning) {
         transition_with_next(Number(key));
         return true;
@@ -5743,7 +5743,7 @@ function Frames(pos) {
     for (let i = 1; i <= this.buttons.length; i++) {
       const btn = this.buttons[i - 1];
       btn.selected = false;
-      if (btn.text == `${frame}`) {
+      if (btn.text === `${frame}`) {
         btn.selected = true;
       }
       btn.render(ctx);
@@ -5793,7 +5793,7 @@ function Menu(pos) {
   })));
 
   this.buttons.push(new Button('pen', { x: 0, y: 0 }, ((b) => {
-    if (tool != 'pen') {
+    if (tool !== 'pen') {
       tool = 'pen';
     } else {
       pen.clear_drawing();
@@ -5900,7 +5900,7 @@ function Menu(pos) {
   })));
 
   this.buttons.push(new Button('camera', { x: 0, y: 0 }, ((b) => {
-    if (tool == 'camera') {
+    if (tool === 'camera') {
       // reset the camera rotation
       cam.properties[frame].rxyz = [0, 0, 0];
       cam.properties[frame].p = cam.default_props.p;
