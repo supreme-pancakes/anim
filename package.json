@@ -5,7 +5,9 @@
   "private": true,
   "scripts": {
     "start": "webpack serve",
-    "build": "webpack"
+    "build": "webpack",
+    "lint": "eslint src/index.js src/volume-meter.js",
+    "lint:fix": "eslint --fix src/index.js src/volume-meter.js"
   },
   "repository": {
     "type": "git",
