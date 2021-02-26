@@ -20,7 +20,7 @@ if (!isMac) {
 }
 
 let errorTimer = 0;
-let errorText = '';
+const errorText = '';
 
 const scaleFactor = 2; // retina
 
