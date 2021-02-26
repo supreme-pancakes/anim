@@ -6,8 +6,8 @@
   "scripts": {
     "start": "webpack serve",
     "build": "webpack",
-    "lint": "eslint src/",
-    "lint:fix": "eslint --fix src/"
+    "lint": "eslint src/**/*.js",
+    "lint:fix": "eslint --fix src/**/*.js"
   },
   "repository": {
     "type": "git",
