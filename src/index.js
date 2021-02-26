@@ -4203,9 +4203,9 @@ function Text(text, pos) {
         const newT = new Text('', { x: p.x, y: p.y + charSize * 2 });
         objs.push(newT);
         newT.select();
-        save_state();
+        saveState();
       } else {
-        enter_select();
+        enterSelect();
       }
 
       return false;
@@ -4871,9 +4871,9 @@ function Text(text, pos) {
         }
       }
 
-      const text_different = at !== bt;
+      const textDifferent = at !== bt;
 
-      if (text_different && transition.transitioning) {
+      if (textDifferent && transition.transitioning) {
         // changing text
         const constrained = constrain(tEase);
         ctx.globalAlpha = 1 - constrained;
@@ -5141,18 +5141,18 @@ function Network(pos) {
     };
 
     // connections
-    let high_conn = [];
-    let high_neur = [];
+    let highConn = [];
+    let highNeur = [];
 
     for (let j = 0; j < layers.length - 1; j++) {
       const units = layers[j];
-      const units_next = layers[j + 1];
+      const unitsNext = layers[j + 1];
 
       for (let i = 0; i < units; i++) {
         const p = loc(i, j, units);
 
-        for (let k = 0; k < units_next; k++) {
-          const p2 = loc(k, j + 1, units_next);
+        for (let k = 0; k < unitsNext; k++) {
+          const p2 = loc(k, j + 1, unitsNext);
 
           /*
                     let vline = [p2[0] - p[0], p2[1] - p[1]];
@@ -5171,7 +5171,7 @@ function Network(pos) {
 
           ctx.strokeStyle = 'black';
 
-          if (high_conn.length === 0) {
+          if (highConn.length === 0) {
             const dx1 = p[0] - mouse.x;
             const dy1 = p[1] - mouse.y;
 
@@ -5186,8 +5186,8 @@ function Network(pos) {
 
             if (d1 + d2 < vlen + 1) {
               ctx.strokeStyle = 'green';
-              high_conn = [i, k, j]; // unit i to unit k in layer j
-              high_neur = [[i, j], [k, j + 1]];
+              highConn = [i, k, j]; // unit i to unit k in layer j
+              highNeur = [[i, j], [k, j + 1]];
             }
           }
 
@@ -5211,17 +5211,17 @@ function Network(pos) {
         ctx.strokeStyle = 'black';
 
         // if we have a highlighted connection and we're in the right layer
-        if (high_conn.length !== 0) {
-          if (high_conn[2] === j) {
-            if (high_conn[0] === i) {
+        if (highConn.length !== 0) {
+          if (highConn[2] === j) {
+            if (highConn[0] === i) {
               if (j === 0) {
                 ctx.strokeStyle = 'blue';
               } else {
                 ctx.strokeStyle = 'red';
               }
             }
-          } else if (high_conn[2] === j - 1) {
-            if (high_conn[1] === i) {
+          } else if (highConn[2] === j - 1) {
+            if (highConn[1] === i) {
               if (j === 0) {
                 ctx.strokeStyle = 'blue';
               } else {
@@ -5240,7 +5240,7 @@ function Network(pos) {
               ctx.strokeStyle = 'red';
             }
 
-            high_neur = [[i, j]];
+            highNeur = [[i, j]];
           }
         }
 
@@ -5289,28 +5289,28 @@ function Camera() {
   this.properties[frame] = copy(this.default_props);
   this.dragging_rotate = false;
 
-  function generate_ticks() {
+  function generateTicks() {
     const ticks = [];
 
     const R = math.range(-10, 11, 1);
     const N = R.size()[0];
     const m = [];
-    const tick_size = 10;
+    const tickSize = 10;
 
     for (let i = 0; i < 2; i++) {
       for (let j = 0; j < N; j++) {
         const t = R._data[j];
         if (i === 0) {
-          m.push([t, -tick_size, 0]);
-          m.push([t, tick_size, 0]);
+          m.push([t, -tickSize, 0]);
+          m.push([t, tickSize, 0]);
         } else if (i === 1) {
           // y axis
-          m.push([-tick_size, t, 0]);
-          m.push([tick_size, t, 0]);
+          m.push([-tickSize, t, 0]);
+          m.push([tickSize, t, 0]);
         } else if (i === 2) {
           // z axis
-          m.push([-tick_size, 0, t]);
-          m.push([tick_size, 0, t]);
+          m.push([-tickSize, 0, t]);
+          m.push([tickSize, 0, t]);
         }
       }
 
@@ -5320,7 +5320,7 @@ function Camera() {
     return ticks;
   }
 
-  this.ticks = generate_ticks();
+  this.ticks = generateTicks();
 
   this.style = function () {
     const props = this.properties[frame];
@@ -5495,9 +5495,9 @@ function Camera() {
   this.update_props();
 }
 
-function save_state() {
+function saveState() {
   // save state
-  const str = state_to_string();
+  const str = stateToString();
   if (states.length > 0) {
     const last = states[states.length - 1];
     if (str !== last) {
@@ -5511,7 +5511,7 @@ function save_state() {
 function undo() {
   if (states.length > 1) {
     states = states.splice(0, states.length - 1);
-    str_to_state(states[states.length - 1]);
+    stringToState(states[states.length - 1]);
   }
 }
 
@@ -5527,13 +5527,13 @@ function guidIndex(objs, obj) {
   return -1;
 }
 
-function state_to_string() {
+function stateToString() {
   return JSON.stringify({
     num_frames: numFrames, frame, objs, cam, pen,
   });
 }
 
-function str_to_state(str) {
+function stringToState(str) {
   const dict = JSON.parse(str);
   const arr = dict.objs;
 
@@ -5557,11 +5557,11 @@ function str_to_state(str) {
     cam.update_props();
   }
 
-  objs = text_array_to_objs(arr, true);
+  objs = textArrayToObjs(arr, true);
 }
 
 function save(objs) {
-  const str = state_to_string();
+  const str = stateToString();
   const blob = new Blob([str], { type: 'text/plain;charset=utf-8' });
   const name = document.getElementById('name').value;
   saveAs(blob, name);
@@ -5577,53 +5577,53 @@ function load(evt) {
   reader.onload = (function (theFile) {
     return function (e) {
       const string = e.target.result;
-      str_to_state(string);
+      stringToState(string);
     };
   }(f));
 
   reader.readAsText(f);
 }
 
-function save_local() {
-  localStorage.setItem('page', state_to_string());
+function saveLocal() {
+  localStorage.setItem('page', stateToString());
 }
 
-function load_local() {
+function loadLocal() {
   // Grab the objects from storage
   const page = localStorage.getItem('page');
   if (page && page.length) {
-    str_to_state(page);
+    stringToState(page);
   }
 }
 
-function text_array_to_objs(arr, keep_animation) {
-  const new_objs = [];
+function textArrayToObjs(arr, keepAnimation) {
+  const newObjs = [];
   for (let i = 0; i < arr.length; i++) {
     const o = arr[i];
-    let new_obj = null;
+    let newObjs = null;
 
     if (o.type === 'Shape') {
-      new_obj = new Shape();
+      newObjs = new Shape();
     } else if (o.type === 'Circle') {
-      new_obj = new Circle();
+      newObjs = new Circle();
     } else if (o.type === 'Text') {
-      new_obj = new Text();
+      newObjs = new Text();
     }
 
-    if (keep_animation) {
-      new_obj.properties = o.properties;
+    if (keepAnimation) {
+      newObjs.properties = o.properties;
     } else {
-      new_obj.properties = {};
-      new_obj.properties[frame] = o.properties[1];
-      new_obj.select();
+      newObjs.properties = {};
+      newObjs.properties[frame] = o.properties[1];
+      newObjs.select();
     }
 
-    new_obj.guid = o.guid;
+    newObjs.guid = o.guid;
 
-    new_objs.push(new_obj);
+    newObjs.push(newObjs);
   }
 
-  return new_objs;
+  return newObjs;
 }
 
 function Frames(pos) {
@@ -5704,7 +5704,7 @@ function Frames(pos) {
         } if (i === this.buttons.length - 1) {
           // add frame
           // copy to next from frame
-          insert_frame();
+          insertFrame();
           return true;
         }
         this.on_click(i + 1);
@@ -5718,19 +5718,19 @@ function Frames(pos) {
     if (key === 'ArrowRight') {
       if (!presenting && frame + 1 > numFrames) {
         // create a new one
-        insert_frame();
+        insertFrame();
       }
 
-      transition_with_next(loop_frame(frame + 1));
+      transitionWithNext(loopFrame(frame + 1));
       return true;
     } if (key === 'ArrowLeft') {
-      transition_with_next(loop_frame(frame - 1));
+      transitionWithNext(loopFrame(frame - 1));
       return true;
     }
 
     if ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].indexOf(Number(key)) !== -1) {
       if (!transition.transitioning) {
-        transition_with_next(Number(key));
+        transitionWithNext(Number(key));
         return true;
       }
 
@@ -5752,7 +5752,7 @@ function Frames(pos) {
   };
 }
 
-function insert_frame() {
+function insertFrame() {
   numFrames += 1;
   for (let f = numFrames; f >= frame; f--) {
     for (let i = 0; i < objs.length; i++) {
@@ -5786,7 +5786,7 @@ function Menu(pos) {
   this.buttons = [];
 
   this.buttons.push(new Button('select', { x: 0, y: 0 }, ((b) => {
-    enter_select();
+    enterSelect();
   })));
 
   this.buttons.push(new Button('text', { x: 0, y: 0 }, ((b) => {
@@ -5910,16 +5910,16 @@ function Menu(pos) {
   })));
 
   this.buttons.push(new Button('csys', { x: 0, y: 0 }, ((b) => {
-    const csys_style = cam.style();
+    const csysStyle = cam.style();
 
-    if (csys_style == '3d') {
+    if (csysStyle == '3d') {
       cam.set_style('flat');
       cam.properties[frame].w = 1.5;
       cam.properties[frame].h = 1.5;
       cam.rotate([-Math.PI / 2, 0, -Math.PI / 2]);
-    } else if (csys_style == 'flat') {
+    } else if (csysStyle == 'flat') {
       cam.set_style('none');
-    } else if (csys_style == 'none') {
+    } else if (csysStyle == 'none') {
       cam.set_style('3d');
       cam.properties[frame].w = 1;
       cam.properties[frame].h = 1;
@@ -5945,11 +5945,11 @@ function Menu(pos) {
 
   this.buttons.push(new Button('save local', { x: 0, y: 0 }, ((b) => {
     // Put the object into storage
-    save_local();
+    saveLocal();
   })));
 
   this.buttons.push(new Button('load local', { x: 0, y: 0 }, ((b) => {
-    load_local();
+    loadLocal();
   })));
 
   this.buttons.push(new Button('ver: 0.1', { x: 0, y: 0 }, ((b) => {
@@ -6009,7 +6009,7 @@ function Transition() {
   this.target_frame = 0;
   this.complete;
 
-  this.run = function (steps, target_frame, completion) {
+  this.run = function (steps, targetFrame, completion) {
     if (this.transitioning) {
       return;
     }
@@ -6018,7 +6018,7 @@ function Transition() {
     tEase = 0.0;
     tInOut = 1.0;
     this.steps = steps;
-    this.target_frame = target_frame;
+    this.target_frame = targetFrame;
     this.transitioning = true;
     this.completion = completion;
   };
@@ -6147,7 +6147,7 @@ function Pen() {
   this.render = function () {
     ctx.save();
 
-    const draw_path = function (_path) {
+    const drawPath = function (_path) {
       ctx.beginPath();
       const path = _path.p;
       const { c } = _path;
@@ -6168,26 +6168,26 @@ function Pen() {
       ctx.stroke();
     };
 
-    let frame_to_draw = frame;
+    let frameToDraw = frame;
 
     if (transition.transitioning) {
       // fade in out
       ctx.globalAlpha = -math.cos(tPercent * 2 * math.PI - math.PI) / 2 + 0.5;
       if (tPercent > 0.5) {
-        frame_to_draw = nextFrame;
+        frameToDraw = nextFrame;
       }
 
       if (!this.drawings[nextFrame]) {
         // fade out
         ctx.globalAlpha = 1 - tPercent;
-        frame_to_draw = frame;
+        frameToDraw = frame;
       }
     }
 
-    if (this.drawings[frame_to_draw]) {
+    if (this.drawings[frameToDraw]) {
       // draw the drawing
-      for (let i = 0; i < this.drawings[frame_to_draw].length; i++) {
-        const path = this.drawings[frame_to_draw][i];
+      for (let i = 0; i < this.drawings[frameToDraw].length; i++) {
+        const path = this.drawings[frameToDraw][i];
 
         if (!presenting) {
           ctx.globalAlpha = 1;
@@ -6196,12 +6196,12 @@ function Pen() {
           }
         }
 
-        draw_path(path);
+        drawPath(path);
       }
     }
 
     if (this.path && this.path.length) {
-      draw_path({ p: this.path, c: this.color });
+      drawPath({ p: this.path, c: this.color });
     }
 
     /*
@@ -6223,7 +6223,7 @@ function Pen() {
   };
 }
 
-function constrain_frame(f) {
+function constrainFrame(f) {
   return Math.max(1, Math.min(numFrames, f));
 }
 
@@ -6231,7 +6231,7 @@ function constrain(v) {
   return Math.min(1, Math.max(0, v));
 }
 
-function loop_frame(f) {
+function loopFrame(f) {
   if (f >= numFrames + 1) {
     return 1;
   } if (f < 1) {
@@ -6241,7 +6241,7 @@ function loop_frame(f) {
   return f;
 }
 
-function draw_axes(ctx) {
+function drawAxes(ctx) {
   if (!cam.R) {
     return;
   }
@@ -6371,7 +6371,7 @@ function draw_axes(ctx) {
   ctx.restore();
 }
 
-function transition_with_next(next) {
+function transitionWithNext(next) {
   if (transition.transitioning) {
     return;
   }
@@ -6381,7 +6381,7 @@ function transition_with_next(next) {
   }
 
   if (tool == 'copy frame') {
-    enter_select();
+    enterSelect();
     // copy properties
     for (let i = 0; i < objs.length; i++) {
       const obj = objs[i];
@@ -6420,12 +6420,12 @@ function transition_with_next(next) {
   });
 }
 
-function enter_select() {
+function enterSelect() {
   tool = 'select';
   newLine = null;
 }
 
-function draw_cursor() {
+function drawCursor() {
   if (presenting && tool == 'pen') {
     const pad = 20;
 
@@ -6514,14 +6514,14 @@ window.onload = function () {
   };
 
   document.getElementById('file').onchange = function (evt) {
-    enter_select();
+    enterSelect();
     load(evt);
   };
 
   document.getElementById('load_to_frame').onclick = function (evt) {
     const text = document.getElementById('selected_objects_text').value;
     const arr = JSON.parse(text);
-    objs = objs.concat(text_array_to_objs(arr, false));
+    objs = objs.concat(textArrayToObjs(arr, false));
   };
 
   formulaText = document.getElementById('formula_text');
@@ -6562,15 +6562,15 @@ window.onload = function () {
     let script = document.getElementById('generic').value;
     script = script.split('\n');
 
-    const s_clean = [];
+    const sClean = [];
     for (let i = 0; i < script.length; i++) {
       const s = script[i];
       if (s.length != 0) {
-        s_clean.push(s);
+        sClean.push(s);
       }
     }
 
-    script = s_clean;
+    script = sClean;
 
     const t = new Text('', { x: 20, y: winHeight * 2 - 60 });
     t.properties[frame].w = 0.6;
@@ -6590,7 +6590,7 @@ window.onload = function () {
     numFrames = script.length;
     frames.create_buttons();
 
-    save_state();
+    saveState();
   };
 
   document.addEventListener('paste', (event) => {
@@ -6614,7 +6614,7 @@ window.onload = function () {
   frame = 1;
   frames = new Frames({ x: c.width - gridSize * 2, y: gridSize / 4 });
   frames.on_click = function (idx) {
-    transition_with_next(idx);
+    transitionWithNext(idx);
   };
 
   menu = new Menu({ x: gridSize / 4, y: gridSize / 2 });
@@ -6637,7 +6637,7 @@ window.onload = function () {
     }
 
     if (key == 'Escape') {
-      enter_select();
+      enterSelect();
     }
 
     if (key == 'Tab') {
@@ -6742,7 +6742,7 @@ window.onload = function () {
       ctrl = false;
     }
 
-    save_state();
+    saveState();
   };
 
   window.onmousedown = function (evt) {
@@ -6791,15 +6791,15 @@ window.onload = function () {
     }
 
     // didn't touch an obj, if tool is move start a rect
-    let obj_selected = false;
+    let objSelected = false;
     const N = objs.length;
     for (let i = 0; i < N; i++) {
       if (objs[i].is_selected()) {
-        obj_selected = true;
+        objSelected = true;
       }
     }
 
-    if (tool == 'select' && obj_selected == false) {
+    if (tool == 'select' && objSelected == false) {
       selecting = true;
     }
   };
@@ -6877,12 +6877,12 @@ window.onload = function () {
       newLine = null;
       selecting = false;
 
-      save_state();
+      saveState();
       return;
     }
 
     if (pen.mouse_up(evt)) {
-      save_state();
+      saveState();
       return;
     }
 
@@ -6929,8 +6929,8 @@ window.onload = function () {
 
       return;
     } else if (tool == 'circle') {
-      const new_circle = new Circle([0, 0, 0, 1], mouseGrid);
-      objs.push(new_circle);
+      const newCircle = new Circle([0, 0, 0, 1], mouseGrid);
+      objs.push(newCircle);
     } else if (tool == 'network') {
       const n = new Network(mouseGrid);
       objs.push(n);
@@ -6974,31 +6974,31 @@ window.onload = function () {
         document.getElementById('selected_objects_text').value = string;
       }
 
-      save_state();
+      saveState();
       return false;
     }
 
-    save_state();
+    saveState();
   };
 
   window.ontouchstart = window.onmousedown;
   window.ontouchmove = window.onmousemove;
   window.ontouchend = window.onmouseup;
 
-  save_state();
+  saveState();
 
   let fps;
   millis = Date.now();
-  let targ_millis = millis + 1; // set below
+  let targMillis = millis + 1; // set below
 
   function animate() {
     millis = Date.now();
-    if (millis < targ_millis) {
-      setTimeout(animate, targ_millis - millis);
+    if (millis < targMillis) {
+      setTimeout(animate, targMillis - millis);
       return;
     }
 
-    targ_millis = millis + 1000 / fps;
+    targMillis = millis + 1000 / fps;
 
     if (presenting) {
       fps = 60;
@@ -7026,7 +7026,7 @@ window.onload = function () {
 
     cam.update_props();
 
-    draw_axes(ctx);
+    drawAxes(ctx);
 
     ctx.font = fontAnim;
 
@@ -7073,7 +7073,7 @@ window.onload = function () {
 
     pen.render();
 
-    draw_cursor();
+    drawCursor();
 
     if (viewFrame) {
       ctx.save();
