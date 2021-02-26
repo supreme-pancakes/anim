@@ -91,7 +91,7 @@ function createAudioMeter(audioContext, clipLevel, averaging, clipLag) {
   return processor;
 }
 
-export default function initVolumeMeter() {
+export function initVolumeMeter() {
   function didntGetStream() {
     alert('Stream generation failed.');
   }
