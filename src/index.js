@@ -11,68 +11,68 @@ const dark = '#000000';
 
 const colors = ['#000000', '#E74C3C', '#2980B9', '#FFA400', '#66E07A', gray];
 
-const font_small = '26px Courier';
-const font_menu = '30px Courier';
-let font_anim = '40px Menlo';
+const fontSmall = '26px Courier';
+const fontMenu = '30px Courier';
+let fontAnim = '40px Menlo';
 const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 if (!isMac) {
-  font_anim = '40px Courier New';
+  fontAnim = '40px Courier New';
 }
 
-let error_timer = 0;
-let error_text = '';
+let errorTimer = 0;
+const errorText = '';
 
-const scale_factor = 2; // retina
+const scaleFactor = 2; // retina
 
 // scatter
 let c;
 let ctx;
-let win_width; let
-  win_height;
+let winWidth;
+let winHeight;
 
-let formula_text;
+let formulaText;
 
 let objs = [];
-let selected_objs = [];
+let selectedObjs = [];
 let frames;
 let menu;
 let cam;
 let pen;
-let num_frames = 3;
+let numFrames = 3;
 let frame = 1; // current frame
-let next_frame;
+let nextFrame;
 let presenting = false;
 let debug = false;
-let view_frame = false;
+let viewFrame = false;
 
 // speech synthesis
 let synth;
 let voices;
 
-let t_ease = 0;
-const t_steps = 30;
-let t_percent = 0;
-let t_in_out = 1.0;
+let tEase = 0;
+const tSteps = 30;
+let tPercent = 0;
+let tInOut = 1.0;
 
-const grid_size = 45;
-let mouse_time = 0;
-const mouse_duration = 40;
+const gridSize = 45;
+let mouseTime = 0;
+const mouseDuration = 40;
 
 let tool = 'select';
 let selecting = false;
-let new_line;
-let text_copied;
+let newLine;
+let textCopied;
 
-let mouse_down = false;
+let mouseDown = false;
 let tab = false;
 let ctrl = false;
 let meta = false;
 let shift = false;
 let mouse = { x: 0, y: 0 };
-let mouse_last = { x: 0, y: 0 };
-let mouse_start = { x: 0, y: 0 };
-let mouse_grid = { x: 0, y: 0 };
-let mouse_graph = { x: 0, y: 0 };
+let mouseLast = { x: 0, y: 0 };
+let mouseStart = { x: 0, y: 0 };
+let mouseGrid = { x: 0, y: 0 };
+let mouseGraph = { x: 0, y: 0 };
 
 const brackets = {
   '(': 1, '[': 1, ')': -1, ']': -1,
@@ -82,11 +82,11 @@ let t = 0; // time for parser
 let millis = 0;
 
 const pi2 = 2 * Math.PI;
-const mat_num_width = 140; // matrix max number width
+const matNumWidth = 140; // matrix max number width
 
 // fn drawing
-const char_size = grid_size / 2;
-const char_pad = grid_size / 4;
+const charSize = gridSize / 2;
+const charPad = gridSize / 4;
 
 const parser = math.parser();
 parser.set('frame', frame);
@@ -102,20 +102,20 @@ function sigp(x) {
 
 // http://stackoverflow.com/questions/25582882/javascript-math-random-normal-distribution-gaussian-bell-curve
 // Maxwell Collard
-function randn_bm() {
+function randNBm() {
   const u = 1 - Math.random(); // Subtraction to flip [0, 1) to (0, 1].
   const v = 1 - Math.random();
   return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
 }
 
 // cache
-const matrix_cache = {};
+const matrixCache = {};
 function cached(dims) {
   const s = dims.join('_');
-  let m = matrix_cache[s];
+  let m = matrixCache[s];
   if (!m) {
     m = math.matrix(math.zeros(dims));
-    matrix_cache[s] = m;
+    matrixCache[s] = m;
   }
 
   return m;
@@ -134,7 +134,7 @@ function graph(fn, d1, d2, d3) { // graphs y=f(x) from -10 to 10
 
   let i = 0;
   let x = -10;
-  let y_last = fn(x);
+  let yLast = fn(x);
   for (; x < 10; x += dx) {
     y = fn(x);
 
@@ -143,7 +143,7 @@ function graph(fn, d1, d2, d3) { // graphs y=f(x) from -10 to 10
     pd[i][d3] = 0;
 
     asyms[i] = 0;
-    if (math.abs(y - y_last) > 20) {
+    if (math.abs(y - yLast) > 20) {
       // vertical asymptote
       asyms[i] = 1;
 
@@ -151,7 +151,7 @@ function graph(fn, d1, d2, d3) { // graphs y=f(x) from -10 to 10
       pd[i][d2] = math.sign(y) * 1000;
     }
 
-    y_last = y;
+    yLast = y;
     i++;
   }
 
@@ -215,15 +215,15 @@ function para(r, tmin, tmax, units) { // graphs x=f(t) y=g(t) z=h(t) from tmin t
   ctx.stroke();
 
   if (units) {
-    let num_dots = tmax - tmin;
-    num_dots = Math.floor(num_dots);
+    let numDots = tmax - tmin;
+    numDots = Math.floor(numDots);
 
-    if (num_dots > 0) {
-      let dots = cached([num_dots, 3]);
+    if (numDots > 0) {
+      let dots = cached([numDots, 3]);
 
       let i = 0;
 
-      for (i = 0; i < num_dots; i++) {
+      for (i = 0; i < numDots; i++) {
         data = r(i + 1)._data;
 
         data[0] = Math.max(Math.min(data[0], 1000), -1000);
@@ -238,7 +238,7 @@ function para(r, tmin, tmax, units) { // graphs x=f(t) y=g(t) z=h(t) from tmin t
       dots = cam.graph_to_screen_mat(dots);
 
       ctx.save();
-      for (let i = 0; i < num_dots; i++) {
+      for (let i = 0; i < numDots; i++) {
         p = dots[i];
 
         ctx.beginPath();
@@ -266,7 +266,7 @@ math.import({
       const props = parser.eval('text_props');
       const { x } = props.p;
       const { y } = props.p;
-      ctx.translate(x + 5 * grid_size * k, y + grid_size);
+      ctx.translate(x + 5 * gridSize * k, y + gridSize);
       ctx.fillText(s, 0, 0);
 
       for (let i = 0; i < 2; i++) {
@@ -281,19 +281,19 @@ math.import({
 
           if (r) {
             ctx.fillStyle = colors[4];
-            ctx.fillText('T', 0, grid_size);
+            ctx.fillText('T', 0, gridSize);
           } else {
             ctx.fillStyle = colors[1];
-            ctx.fillText('F', 0, grid_size);
+            ctx.fillText('F', 0, gridSize);
           }
 
           ctx.beginPath();
           ctx.strokeStyle = colors[5];
-          ctx.moveTo(0, grid_size / 2 - 2);
-          ctx.lineTo(grid_size * 5, grid_size / 2 - 2);
+          ctx.moveTo(0, gridSize / 2 - 2);
+          ctx.lineTo(gridSize * 5, gridSize / 2 - 2);
           ctx.stroke();
 
-          ctx.translate(0, grid_size);
+          ctx.translate(0, gridSize);
         }
       }
 
@@ -581,11 +581,11 @@ math.import({
     if (N == 1) {
       const shape = arguments[0];
       let m = cached(shape._data);
-      m = m.map(() => randn_bm());
+      m = m.map(() => randNBm());
 
       return m;
     }
-    return randn_bm();
+    return randNBm();
   },
   axes(x, y, z) { // replace default camera axis names
     cam.axes_names = [x, y, z];
@@ -593,7 +593,7 @@ math.import({
   block() { // exectutes each argument
   },
   rotation(rx, ry, rz) { // creates a 3x3 rotation matrix
-    return math.matrix(rotation_matrix(rx, ry, rz));
+    return math.matrix(rotationMatrix(rx, ry, rz));
   },
   grid(rangex, rangey) { // returns matrix x*y by 2
     if (!rangey) {
@@ -629,18 +629,18 @@ math.import({
   T(m) { // transpose m
     return math.transpose(m);
   },
-  scatter(points, point_size, color_fn) { // points [[x1, y1, z1], ...], psize, color([x,y,z])=[r,g,b] 0 <= r <= 1
+  scatter(points, pointSize, colorFn) { // points [[x1, y1, z1], ...], psize, color([x,y,z])=[r,g,b] 0 <= r <= 1
     const size = points.size();
     const n = size[0];
-    const points_d = points._data;
+    const pointsD = points._data;
 
     let psize = 8;
     if (arguments.length >= 2) {
       psize = arguments[1];
     }
-    const psize_half = psize / 2;
+    const psizeHalf = psize / 2;
 
-    const cam_data = cam.graph_to_screen_mat(points);
+    const camData = cam.graph_to_screen_mat(points);
 
     ctx.save();
     if (arguments.length == 3) {
@@ -650,8 +650,8 @@ math.import({
       for (let i = 0; i < n; ++i) indices[i] = i;
 
       indices.sort((a, b) => {
-        a = cam_data[a][2];
-        b = cam_data[b][2];
+        a = camData[a][2];
+        b = camData[b][2];
         return a < b ? 1 : (a > b ? -1 : 1);
       });
 
@@ -659,17 +659,17 @@ math.import({
       for (let j = 0; j < n; j++) {
         const i = indices[j];
 
-        const p = points_d[i];
+        const p = pointsD[i];
 
         // constrain
-        col = color_fn(p)._data;
+        col = colorFn(p)._data;
         col = [constrain(col[0]), constrain(col[1]), constrain(col[2])];
         ctx.fillStyle = rgbToHex(math.multiply(col, 255));
-        ctx.fillRect(cam_data[i][0] - psize_half, cam_data[i][1] - psize_half, psize, psize);
+        ctx.fillRect(camData[i][0] - psizeHalf, camData[i][1] - psizeHalf, psize, psize);
       }
     } else {
       for (let i = 0; i < n; i++) {
-        ctx.fillRect(cam_data[i][0] - psize_half, cam_data[i][1] - psize_half, psize, psize);
+        ctx.fillRect(camData[i][0] - psizeHalf, camData[i][1] - psizeHalf, psize, psize);
       }
     }
     ctx.restore();
@@ -689,14 +689,14 @@ math.import({
       color = [constrain(color[0]), constrain(color[1]), constrain(color[2])];
     }
 
-    const cam_data = cam.graph_to_screen_mat(math.matrix([a]))[0];
+    const camData = cam.graph_to_screen_mat(math.matrix([a]))[0];
 
     ctx.save();
     ctx.beginPath();
     if (color) {
       ctx.fillStyle = rgbToHex(math.multiply(color, 255));
     }
-    ctx.arc(cam_data[0], cam_data[1], psize, 0, pi2);
+    ctx.arc(camData[0], camData[1], psize, 0, pi2);
     ctx.fill();
 
     ctx.restore();
@@ -814,13 +814,13 @@ math.import({
       }
     }
 
-    draw_vect(_x, _y, _z, x, y, z);
+    drawVect(_x, _y, _z, x, y, z);
   },
-  if(fn_condition, fn_a, fn_b) { // if fn_condition() == true then fn_a() else fn_b()
-    if (fn_condition()) {
-      fn_a();
+  if(fnCondition, fnA, fnB) { // if fn_condition() == true then fn_a() else fn_b()
+    if (fnCondition()) {
+      fnA();
     } else {
-      fn_b();
+      fnB();
     }
   },
   list(fn, array) { // [fn(v) for v in array]
@@ -853,7 +853,7 @@ math.import({
   view(x, p) { // matrix, position: [x, y, z]
     let t = [];
     if (x._data) {
-      x = x.map((value) => pretty_round(value));
+      x = x.map((value) => prettyRound(value));
 
       const d = x._data;
       if (x._size.length == 1) {
@@ -874,7 +874,7 @@ math.import({
     p = cam.graph_to_screen(p[0], p[1], 0);
     for (let i = 0; i < t.length; i++) {
       ctx.textAlign = 'left';
-      ctx.fillText(t[i], p[0], p[1] + grid_size * i);
+      ctx.fillText(t[i], p[0], p[1] + gridSize * i);
     }
   },
   labels(labels, points) { // render labels ["l1", ...] at [[x1, y1, z1], ...]
@@ -932,7 +932,7 @@ math.import({
             v = [v[0] / n, v[1] / n, v[2] / n];
           }
 
-          draw_vect(x, y, z, x + v[0], y + v[1], z + v[2]);
+          drawVect(x, y, z, x + v[0], y + v[1], z + v[2]);
         }
       }
     }
@@ -1044,7 +1044,7 @@ math.import({
           const p = r(u, v)._data;
 
           const vect = f(p[0], p[1], p[2])._data;
-          draw_vect(p[0], p[1], p[2], p[0] + vect[0], p[1] + vect[1], p[2] + vect[2]);
+          drawVect(p[0], p[1], p[2], p[0] + vect[0], p[1] + vect[1], p[2] + vect[2]);
         }
       }
     }
@@ -1091,7 +1091,7 @@ math.import({
       return (f(a + h) - f(a)) / h;
     };
   },
-  visnet(layers, ret_highlighted) { // Draws a neural net layers = [1, 2, 3, 2, 1]
+  visnet(layers, retHighlighted) { // Draws a neural net layers = [1, 2, 3, 2, 1]
     layers = layers._data;
 
     const props = parser.eval('text_props');
@@ -1110,18 +1110,18 @@ math.import({
     ctx.save();
 
     // connections
-    let high_conn = [];
-    let high_neur = [];
+    let highConn = [];
+    let highNeur = [];
 
     for (let j = 0; j < layers.length - 1; j++) {
       const units = layers[j];
-      const units_next = layers[j + 1];
+      const unitsNext = layers[j + 1];
 
       for (let i = 0; i < units; i++) {
         const p = loc(i, j, units);
 
-        for (let k = 0; k < units_next; k++) {
-          const p2 = loc(k, j + 1, units_next);
+        for (let k = 0; k < unitsNext; k++) {
+          const p2 = loc(k, j + 1, unitsNext);
 
           /*
                     let vline = [p2[0] - p[0], p2[1] - p[1]];
@@ -1140,7 +1140,7 @@ math.import({
 
           ctx.strokeStyle = 'black';
 
-          if (high_conn.length == 0) {
+          if (highConn.length == 0) {
             const dx1 = p[0] - mouse.x;
             const dy1 = p[1] - mouse.y;
 
@@ -1155,8 +1155,8 @@ math.import({
 
             if (d1 + d2 < vlen + 1) {
               ctx.strokeStyle = colors[3];
-              high_conn = [i, k, j]; // unit i to unit k in layer j
-              high_neur = [[i, j], [k, j + 1]];
+              highConn = [i, k, j]; // unit i to unit k in layer j
+              highNeur = [[i, j], [k, j + 1]];
             }
           }
 
@@ -1180,17 +1180,17 @@ math.import({
         ctx.strokeStyle = 'black';
 
         // if we have a highlighted connection and we're in the right layer
-        if (high_conn.length != 0) {
-          if (high_conn[2] == j) {
-            if (high_conn[0] == i) {
+        if (highConn.length != 0) {
+          if (highConn[2] == j) {
+            if (highConn[0] == i) {
               if (j == 0) {
                 ctx.strokeStyle = colors[1];
               } else {
                 ctx.strokeStyle = colors[2];
               }
             }
-          } else if (high_conn[2] == j - 1) {
-            if (high_conn[1] == i) {
+          } else if (highConn[2] == j - 1) {
+            if (highConn[1] == i) {
               if (j == 0) {
                 ctx.strokeStyle = colors[1];
               } else {
@@ -1209,7 +1209,7 @@ math.import({
               ctx.strokeStyle = colors[2];
             }
 
-            high_neur = [[i, j]];
+            highNeur = [[i, j]];
           }
         }
 
@@ -1222,8 +1222,8 @@ math.import({
 
     ctx.restore();
 
-    if (arguments.length >= 2 && ret_highlighted) {
-      return [high_conn, high_neur];
+    if (arguments.length >= 2 && retHighlighted) {
+      return [highConn, highNeur];
     }
   },
   int(n) {
@@ -1364,31 +1364,31 @@ math.import({
 
     const result = math.multiply(W, x);
 
-    const xformat = format_matrix(x._data);
-    const rformat = format_matrix(result._data);
-    const Wformat = format_matrix(W._data);
+    const xformat = formatMatrix(x._data);
+    const rformat = formatMatrix(result._data);
+    const Wformat = formatMatrix(W._data);
 
-    const rsize = matrix_size(rformat);
-    const Wsize = matrix_size(format_matrix(W._data));
-    const xsize = matrix_size(xformat);
+    const rsize = matrixSize(rformat);
+    const Wsize = matrixSize(formatMatrix(W._data));
+    const xsize = matrixSize(xformat);
 
     // draw neural network
     const high = math.visnet(math.matrix([x._size[0], W._size[0]]), true);
-    const high_conn = high[0];
-    const high_neur = high[1];
+    const highConn = high[0];
+    const highNeur = high[1];
 
     // draw matrices
 
     // draw result matrix
     ctx.save();
 
-    ctx.font = font_anim;
+    ctx.font = fontAnim;
 
     ctx.translate(loc[0] + 10, loc[1] + 330);
-    draw_matrix(rformat, (i) => {
+    drawMatrix(rformat, (i) => {
       ctx.fillStyle = 'black';
-      for (let n = 0; n < high_neur.length; n++) {
-        const highn = high_neur[n];
+      for (let n = 0; n < highNeur.length; n++) {
+        const highn = highNeur[n];
         if (highn[1] == 1 && highn[0] == i) {
           ctx.fillStyle = colors[2];
         }
@@ -1400,9 +1400,9 @@ math.import({
 
     // draw W matrix
     ctx.translate(rsize[0] + pad * 3, 0);
-    draw_matrix(Wformat, (i, j) => {
+    drawMatrix(Wformat, (i, j) => {
       ctx.fillStyle = 'black';
-      if (high_conn.length && high_conn[0] == j && high_conn[1] == i) {
+      if (highConn.length && highConn[0] == j && highConn[1] == i) {
         ctx.fillStyle = colors[3];
       }
     });
@@ -1411,11 +1411,11 @@ math.import({
 
     // draw x matrix
     ctx.translate(Wsize[0] + pad * 3, rsize[1] / 2 - xsize[1] / 2);
-    draw_matrix(xformat, (i) => {
+    drawMatrix(xformat, (i) => {
       ctx.fillStyle = 'black';
 
-      for (let n = 0; n < high_neur.length; n++) {
-        const highn = high_neur[n];
+      for (let n = 0; n < highNeur.length; n++) {
+        const highn = highNeur[n];
         if (highn[1] == 0 && highn[0] == i) {
           ctx.fillStyle = colors[1];
         }
@@ -1432,25 +1432,25 @@ math.import({
 
     const result = math.multiply(W, x);
 
-    const rformat = format_matrix(result._data);
-    const rsize = matrix_size(rformat);
+    const rformat = formatMatrix(result._data);
+    const rsize = matrixSize(rformat);
 
     // draw neural network
     const high = math.visnet(math.matrix([x._size[0], W._size[0]]), true);
-    const high_neur = high[1];
+    const highNeur = high[1];
 
     // draw matrices
 
     // draw result matrix
     ctx.save();
 
-    ctx.font = font_anim;
+    ctx.font = fontAnim;
 
     ctx.translate(loc[0] + 10, loc[1] + 330);
-    draw_matrix(rformat, (i) => {
+    drawMatrix(rformat, (i) => {
       ctx.fillStyle = 'black';
-      for (let n = 0; n < high_neur.length; n++) {
-        const highn = high_neur[n];
+      for (let n = 0; n < highNeur.length; n++) {
+        const highn = highNeur[n];
         if (highn[1] == 1 && highn[0] == i) {
           ctx.fillStyle = 'red';
         }
@@ -1463,9 +1463,9 @@ math.import({
     // draw dot prod matrix
     ctx.translate(rsize[0] + pad * 3, 0);
 
-    let round = pretty_round_one;
+    let round = prettyRoundOne;
     if (ctrl) {
-      round = pretty_round;
+      round = prettyRound;
     }
 
     for (let i = 0; i < W._data.length; i++) {
@@ -1478,16 +1478,16 @@ math.import({
         }
       }
 
-      ctx.fillText(text, 0, i * grid_size + 20);
+      ctx.fillText(text, 0, i * gridSize + 20);
     }
 
     ctx.restore();
   },
-  magfield(path, current, at_point) { // mag field from path [[x1, y1, z1], [x2, y2, z2], ...]
+  magfield(path, current, AtPoint) { // mag field from path [[x1, y1, z1], [x2, y2, z2], ...]
     n = 5;
     const d = 20 / n;
 
-    const b_at = function (x, y, z, path, current) {
+    const bAt = function (x, y, z, path, current) {
       path = path._data;
 
       let b = math.zeros(3);
@@ -1512,19 +1512,19 @@ math.import({
     };
 
     if (arguments.length >= 3) {
-      at_point = at_point._data;
-      const b = b_at(at_point[0], at_point[1], at_point[2], path, current);
+      AtPoint = AtPoint._data;
+      const b = bAt(AtPoint[0], AtPoint[1], AtPoint[2], path, current);
 
       return b;
     }
     for (let x = -10; x <= 10; x += d) {
       for (let y = -10; y <= 10; y += d) {
         for (let z = -10; z <= 10; z += d) {
-          let b = b_at(x, y, z, path, current);
+          let b = bAt(x, y, z, path, current);
 
           if (math.norm(b) > 0.1) {
             b = b._data;
-            draw_vect(x, y, z, x + b[0], y + b[1], z + b[2]);
+            drawVect(x, y, z, x + b[0], y + b[1], z + b[2]);
           }
         }
       }
@@ -2291,7 +2291,7 @@ math.import({
         uv = [1, dydx];
         uv = math.matrix(uv);
         uv = math.multiply(uv, 1 / math.norm(uv));
-        draw_vect(x, y, 0, x + uv._data[0], y + uv._data[1], 0);
+        drawVect(x, y, 0, x + uv._data[0], y + uv._data[1], 0);
       }
     }
   },
@@ -2513,15 +2513,15 @@ function guid() {
     s4()}-${s4()}${s4()}${s4()}`;
 }
 
-function pretty_round(num) {
+function prettyRound(num) {
   return (Math.round(num * 100) / 100).toFixed(2);
 }
 
-function pretty_round_one(num) {
+function prettyRoundOne(num) {
   return (Math.round(num * 10) / 10).toFixed(1);
 }
 
-function draw_r(o, p, d) {
+function drawR(o, p, d) {
   // o tree object
   // p position
   // d should draw, false to just get the size
@@ -2547,41 +2547,41 @@ function draw_r(o, p, d) {
     if (text == '+' || text == '-' || text == '*') {
       if (argc == 1) {
         if (d) ctx.fillText(text, p.x, p.y);
-        const s1 = draw_r(args[0], { x: p.x + char_size, y: p.y }, d);
+        const s1 = drawR(args[0], { x: p.x + charSize, y: p.y }, d);
 
-        size.w = s1.w + char_size;
+        size.w = s1.w + charSize;
         size.h = s1.h;
       } else if (argc == 2) {
         // draw on the left and the right
 
         const center = false; // false -> bottom align
-        let pad2 = char_pad * 2;
+        let pad2 = charPad * 2;
         if (text == '*') {
           pad2 = 0;
         }
 
-        let s1 = draw_r(args[0], { x: 0, y: 0 }, false);
-        let s2 = draw_r(args[1], { x: 0, y: 0 }, false);
+        let s1 = drawR(args[0], { x: 0, y: 0 }, false);
+        let s2 = drawR(args[1], { x: 0, y: 0 }, false);
 
-        size.w = s1.w + text.length * char_size + 2 * pad2 + s2.w;
+        size.w = s1.w + text.length * charSize + 2 * pad2 + s2.w;
         size.h = Math.max(s1.h, s2.h);
 
         if (d) {
           let opp = { x: 0, y: 0 };
           if (center) {
-            s1 = draw_r(args[0], { x: p.x, y: p.y + size.h / 2 - s1.h / 2 }, d);
-            opp = { x: p.x + s1.w + pad2, y: p.y + size.h / 2 - char_size };
-            s2 = draw_r(args[1], { x: p.x + s1.w + pad2 + text.length * char_size + pad2, y: p.y + size.h / 2 - s2.h / 2 }, d);
+            s1 = drawR(args[0], { x: p.x, y: p.y + size.h / 2 - s1.h / 2 }, d);
+            opp = { x: p.x + s1.w + pad2, y: p.y + size.h / 2 - charSize };
+            s2 = drawR(args[1], { x: p.x + s1.w + pad2 + text.length * charSize + pad2, y: p.y + size.h / 2 - s2.h / 2 }, d);
           } else {
             // bottom align
-            s1 = draw_r(args[0], { x: p.x, y: p.y + size.h - s1.h }, d);
-            opp = { x: p.x + s1.w + pad2, y: p.y + size.h - char_size * 2 };
-            s2 = draw_r(args[1], { x: p.x + s1.w + pad2 + text.length * char_size + pad2, y: p.y + size.h - s2.h }, d);
+            s1 = drawR(args[0], { x: p.x, y: p.y + size.h - s1.h }, d);
+            opp = { x: p.x + s1.w + pad2, y: p.y + size.h - charSize * 2 };
+            s2 = drawR(args[1], { x: p.x + s1.w + pad2 + text.length * charSize + pad2, y: p.y + size.h - s2.h }, d);
           }
 
           if (text == '*') {
             ctx.beginPath();
-            ctx.arc(opp.x + char_size / 2, opp.y + char_size, 3, 0, pi2);
+            ctx.arc(opp.x + charSize / 2, opp.y + charSize, 3, 0, pi2);
             ctx.fill();
           } else {
             ctx.fillText(text, opp.x, opp.y);
@@ -2598,15 +2598,15 @@ function draw_r(o, p, d) {
           b = b.content;
         }
 
-        const s1 = draw_r(a, { x: 0, y: 0 }, false);
-        const s2 = draw_r(b, { x: 0, y: 0 }, false);
+        const s1 = drawR(a, { x: 0, y: 0 }, false);
+        const s2 = drawR(b, { x: 0, y: 0 }, false);
 
         size.w = s1.w + s2.w;
-        size.h = s1.h + s2.h - char_size;
+        size.h = s1.h + s2.h - charSize;
 
         if (d) {
-          draw_r(a, { x: p.x, y: p.y + size.h - s1.h }, d);
-          draw_r(b, { x: p.x + s1.w, y: p.y }, d);
+          drawR(a, { x: p.x, y: p.y + size.h - s1.h }, d);
+          drawR(b, { x: p.x + s1.w, y: p.y }, d);
         }
       }
     } else if (text == '/') {
@@ -2623,15 +2623,15 @@ function draw_r(o, p, d) {
           b = b.content;
         }
 
-        const s1 = draw_r(a, { x: 0, y: 0 }, false);
-        const s2 = draw_r(b, { x: 0, y: 0 }, false);
+        const s1 = drawR(a, { x: 0, y: 0 }, false);
+        const s2 = drawR(b, { x: 0, y: 0 }, false);
 
-        size.w = Math.max(s1.w, s2.w) + char_pad * 2;
-        size.h = Math.max(s1.h, s2.h) * 2 + char_pad * 4;
+        size.w = Math.max(s1.w, s2.w) + charPad * 2;
+        size.h = Math.max(s1.h, s2.h) * 2 + charPad * 4;
 
         if (d) {
-          draw_r(a, { x: p.x + size.w / 2 - s1.w / 2, y: p.y + size.h / 2 - s1.h - char_pad * 2 }, d);
-          draw_r(b, { x: p.x + size.w / 2 - s2.w / 2, y: p.y + size.h / 2 + char_pad * 2 }, d);
+          drawR(a, { x: p.x + size.w / 2 - s1.w / 2, y: p.y + size.h / 2 - s1.h - charPad * 2 }, d);
+          drawR(b, { x: p.x + size.w / 2 - s2.w / 2, y: p.y + size.h / 2 + charPad * 2 }, d);
 
           ctx.beginPath();
           ctx.moveTo(p.x, p.y + size.h / 2);
@@ -2640,10 +2640,10 @@ function draw_r(o, p, d) {
         }
       }
     } else if (text == '!') {
-      const s1 = draw_r(args[0], { x: p.x, y: p.y }, d);
+      const s1 = drawR(args[0], { x: p.x, y: p.y }, d);
       if (d) ctx.fillText(text, p.x + s1.w, p.y);
 
-      size.w = s1.w + char_size;
+      size.w = s1.w + charSize;
       size.h = s1.h;
     } else if (o.fn) {
       // function call
@@ -2653,7 +2653,7 @@ function draw_r(o, p, d) {
       const N = args.length;
       const hs = [];
       for (let i = 0; i < N; i++) {
-        const s1 = draw_r(args[i], { x: 0, y: 0 }, false);
+        const s1 = drawR(args[i], { x: 0, y: 0 }, false);
         hs.push(s1);
 
         h = Math.max(h, s1.h);
@@ -2663,25 +2663,25 @@ function draw_r(o, p, d) {
 
       // draw it
       text = `${o.name}(`;
-      const cally = p.y + size.h / 2 - char_size;
+      const cally = p.y + size.h / 2 - charSize;
 
       if (d) {
         for (let i = 0; i < text.length; i++) {
-          ctx.fillText(text[i], p.x + i * char_size, cally);
+          ctx.fillText(text[i], p.x + i * charSize, cally);
         }
       }
 
-      let xo = text.length * char_size;
+      let xo = text.length * charSize;
 
       for (let i = 0; i < N; i++) {
-        const s1 = draw_r(args[i], { x: p.x + xo, y: p.y + size.h / 2 - hs[i].h / 2 }, d);
+        const s1 = drawR(args[i], { x: p.x + xo, y: p.y + size.h / 2 - hs[i].h / 2 }, d);
         xo += s1.w;
 
         if (i == N - 1) {
           if (d) ctx.fillText(')', p.x + xo, cally);
         } else if (d) ctx.fillText(',', p.x + xo, cally);
 
-        xo += char_size;
+        xo += charSize;
       }
 
       size.w = xo;
@@ -2699,35 +2699,35 @@ function draw_r(o, p, d) {
 
     if (o.content) {
       // parens
-      let s1 = draw_r(o.content, { x: 0, y: 0 }, false);
+      let s1 = drawR(o.content, { x: 0, y: 0 }, false);
       // ctx.save();
       // ctx.scale(1, s1.h/(char_size*2));
-      if (d) ctx.fillText('(', p.x, p.y + s1.h / 2 - char_size);
-      if (d) ctx.fillText(')', p.x + s1.w + char_size, p.y + s1.h / 2 - char_size);
+      if (d) ctx.fillText('(', p.x, p.y + s1.h / 2 - charSize);
+      if (d) ctx.fillText(')', p.x + s1.w + charSize, p.y + s1.h / 2 - charSize);
       // ctx.restore();
 
-      s1 = draw_r(o.content, { x: p.x + char_size, y: p.y }, d);
+      s1 = drawR(o.content, { x: p.x + charSize, y: p.y }, d);
 
-      size.w = s1.w + char_size * 2;
+      size.w = s1.w + charSize * 2;
       size.h = s1.h;
     } else if (o.node) {
-      size = draw_r(o.node, { x: p.x, y: p.y }, d);
+      size = drawR(o.node, { x: p.x, y: p.y }, d);
     } else if (o.object && o.value) {
       // assignment
 
-      const s1 = draw_r(o.value, { x: 0, y: 0 }, false);
+      const s1 = drawR(o.value, { x: 0, y: 0 }, false);
       const text = `${o.object.name} = `;
 
       if (d) {
         ctx.save();
-        ctx.translate(p.x, p.y + s1.h / 2 - char_size);
-        draw_simple(text);
+        ctx.translate(p.x, p.y + s1.h / 2 - charSize);
+        drawSimple(text);
         ctx.restore();
 
-        draw_r(o.value, { x: p.x + text.length * char_size, y: p.y }, d);
+        drawR(o.value, { x: p.x + text.length * charSize, y: p.y }, d);
       }
 
-      size.w = s1.w + text.length * char_size;
+      size.w = s1.w + text.length * charSize;
       size.h = s1.h;
     } else if (o.blocks) {
       // block
@@ -2739,7 +2739,7 @@ function draw_r(o, p, d) {
       const N = items.length;
       const hs = [];
       for (let i = 0; i < N; i++) {
-        const s1 = draw_r(items[i], { x: 0, y: 0 }, false);
+        const s1 = drawR(items[i], { x: 0, y: 0 }, false);
         hs.push(s1);
 
         h = Math.max(h, s1.h);
@@ -2748,20 +2748,20 @@ function draw_r(o, p, d) {
       size.h = h;
 
       // draw it
-      const cally = p.y + size.h / 2 - char_size;
+      const cally = p.y + size.h / 2 - charSize;
       let xo = 0;
 
       for (let i = 0; i < N; i++) {
-        const s1 = draw_r(items[i], { x: p.x + xo, y: p.y + size.h / 2 - hs[i].h / 2 }, d);
+        const s1 = drawR(items[i], { x: p.x + xo, y: p.y + size.h / 2 - hs[i].h / 2 }, d);
         xo += s1.w;
 
         if (i != N - 1) {
           if (d) ctx.fillText(';', p.x + xo, cally);
         }
-        xo += char_size;
+        xo += charSize;
       }
 
-      xo -= char_size;
+      xo -= charSize;
 
       size.w = xo;
     } else if (o.items) {
@@ -2774,7 +2774,7 @@ function draw_r(o, p, d) {
       const N = items.length;
       const hs = [];
       for (let i = 0; i < N; i++) {
-        const s1 = draw_r(items[i], { x: 0, y: 0 }, false);
+        const s1 = drawR(items[i], { x: 0, y: 0 }, false);
         hs.push(s1);
 
         h = Math.max(h, s1.h);
@@ -2783,43 +2783,43 @@ function draw_r(o, p, d) {
       size.h = h;
 
       // draw it
-      const cally = p.y + size.h / 2 - char_size;
-      let xo = char_size; // first open bracket
+      const cally = p.y + size.h / 2 - charSize;
+      let xo = charSize; // first open bracket
 
       for (let i = 0; i < N; i++) {
-        const s1 = draw_r(items[i], { x: p.x + xo, y: p.y + size.h / 2 - hs[i].h / 2 }, d);
+        const s1 = drawR(items[i], { x: p.x + xo, y: p.y + size.h / 2 - hs[i].h / 2 }, d);
         xo += s1.w;
 
         if (i != N - 1) {
           if (d) ctx.fillText(',', p.x + xo, cally);
         }
-        xo += char_size;
+        xo += charSize;
       }
 
       ctx.save();
-      ctx.scale(1, size.h / (char_size * 2));
+      ctx.scale(1, size.h / (charSize * 2));
       if (d) ctx.fillText('[', p.x, cally);
-      if (d) ctx.fillText(']', p.x + xo - char_size, cally);
+      if (d) ctx.fillText(']', p.x + xo - charSize, cally);
       ctx.restore();
 
       size.w = xo;
     } else if (o.expr) {
       // function definition
-      const s1 = draw_r(o.expr, { x: 0, y: 0 }, false);
+      const s1 = drawR(o.expr, { x: 0, y: 0 }, false);
 
       text = o.name;
       text += `(${o.params.join(',')}) = `;
 
       if (d) {
         ctx.save();
-        ctx.translate(p.x, p.y + s1.h - char_size * 2);
-        draw_simple(text);
+        ctx.translate(p.x, p.y + s1.h - charSize * 2);
+        drawSimple(text);
         ctx.restore();
       }
 
-      const xo = text.length * char_size;
+      const xo = text.length * charSize;
 
-      draw_r(o.expr, { x: p.x + xo, y: p.y }, d);
+      drawR(o.expr, { x: p.x + xo, y: p.y }, d);
 
       size.w = xo + s1.w;
       size.h = s1.h;
@@ -2827,12 +2827,12 @@ function draw_r(o, p, d) {
       if (d) {
         const N = text.length;
         for (let i = 0; i < N; i++) {
-          ctx.fillText(text[i], p.x + i * char_size, p.y);
+          ctx.fillText(text[i], p.x + i * charSize, p.y);
         }
       }
 
-      size.w = text.length * char_size;
-      size.h = char_size * 2;
+      size.w = text.length * charSize;
+      size.h = charSize * 2;
     }
   }
 
@@ -2841,7 +2841,7 @@ function draw_r(o, p, d) {
   return size;
 }
 
-function draw_vect(_x, _y, _z, x, y, z) {
+function drawVect(_x, _y, _z, x, y, z) {
   a = cam.graph_to_screen(_x, _y, _z);
   b = cam.graph_to_screen(x, y, z);
 
@@ -2864,7 +2864,7 @@ function draw_vect(_x, _y, _z, x, y, z) {
   ctx.stroke();
 }
 
-function draw_brackets(sx, sy, width, height) {
+function drawBrackets(sx, sy, width, height) {
   ctx.beginPath();
   ctx.moveTo(sx + 7, sy);
   ctx.lineTo(sx, sy);
@@ -2880,20 +2880,20 @@ function draw_brackets(sx, sy, width, height) {
   ctx.stroke();
 }
 
-function draw_simple(text) {
+function drawSimple(text) {
   for (let i = 0; i < text.length; i++) {
     if (text[i] == '*') {
       ctx.beginPath();
-      ctx.arc(i * char_size + char_size / 2, 0, 3, 0, pi2);
+      ctx.arc(i * charSize + charSize / 2, 0, 3, 0, pi2);
       ctx.fill();
     } else {
-      ctx.fillText(text[i], i * char_size, 0);
+      ctx.fillText(text[i], i * charSize, 0);
     }
   }
-  return text.length * char_size;
+  return text.length * charSize;
 }
 
-function draw_network(layers, pos) {
+function drawNetwork(layers, pos) {
   const pad = 120;
 
   loc = function (i, j, units) {
@@ -2905,13 +2905,13 @@ function draw_network(layers, pos) {
   // connections
   for (let j = 0; j < layers.length - 1; j++) {
     const units = layers[j];
-    const units_next = layers[j + 1];
+    const unitsNext = layers[j + 1];
 
     for (let i = 0; i < units; i++) {
       const p = loc(i, j, units);
 
-      for (let k = 0; k < units_next; k++) {
-        const p2 = loc(k, j + 1, units_next);
+      for (let k = 0; k < unitsNext; k++) {
+        const p2 = loc(k, j + 1, unitsNext);
 
         const l = new Shape([0, 0, 0, 1], [{ x: p[0], y: p[1] }, { x: p2[0], y: p2[1] }]);
         objs.push(l);
@@ -2932,12 +2932,12 @@ function draw_network(layers, pos) {
   }
 }
 
-const cache_fn = {};
-function draw_fn(fn) {
+const cacheFn = {};
+function drawFn(fn) {
   let tree;
 
-  if (cache_fn[fn]) {
-    tree = cache_fn[fn];
+  if (cacheFn[fn]) {
+    tree = cacheFn[fn];
   } else {
     try {
       tree = math.parse(fn);
@@ -2946,7 +2946,7 @@ function draw_fn(fn) {
     }
 
     if (tree) {
-      cache_fn[fn] = tree;
+      cacheFn[fn] = tree;
     }
   }
 
@@ -2957,24 +2957,24 @@ function draw_fn(fn) {
   ctx.save();
   ctx.textAlign = 'left';
   ctx.textBaseline = 'top';
-  const size = draw_r(tree, { x: 0, y: 0 }, false);
-  draw_r(tree, { x: 0, y: -size.h / 2 }, true);
+  const size = drawR(tree, { x: 0, y: 0 }, false);
+  drawR(tree, { x: 0, y: -size.h / 2 }, true);
   ctx.restore();
 
   return size;
 }
 
-function matrix_size(matrix) {
+function matrixSize(matrix) {
   if (matrix && matrix.length == 0) {
     return;
   }
 
   const pad = 24;
 
-  return [matrix[0].length * (mat_num_width + pad), matrix.length * grid_size];
+  return [matrix[0].length * (matNumWidth + pad), matrix.length * gridSize];
 }
 
-function draw_matrix(matrix, color_ij) {
+function drawMatrix(matrix, colorIJ) {
   ctx.save();
   ctx.textAlign = 'right';
 
@@ -2985,34 +2985,34 @@ function draw_matrix(matrix, color_ij) {
     shift = 24;
   }
 
-  const max_width = mat_num_width - 10;
+  const maxWidth = matNumWidth - 10;
 
   for (let i = 0; i < matrix.length; i++) {
     for (let j = 0; j < matrix[i].length; j++) {
-      if (color_ij) {
-        color_ij(i, j);
+      if (colorIJ) {
+        colorIJ(i, j);
       }
-      ctx.fillText(matrix[i][j], j * (mat_num_width + pad) + 124 + shift, i * grid_size + 20, max_width);
+      ctx.fillText(matrix[i][j], j * (matNumWidth + pad) + 124 + shift, i * gridSize + 20, maxWidth);
     }
   }
 
-  size = matrix_size(matrix);
-  draw_brackets(0, 0, size[0], size[1]);
+  size = matrixSize(matrix);
+  drawBrackets(0, 0, size[0], size[1]);
 
   ctx.restore();
 }
 
-function format_matrix(matrix) {
+function formatMatrix(matrix) {
   if (matrix.length == 0) {
     return null;
   }
 
   // format for display
   const formatted = [];
-  let round = pretty_round_one;
+  let round = prettyRoundOne;
 
   if (ctrl) {
-    round = pretty_round;
+    round = prettyRound;
   }
 
   if (typeof matrix[0] === 'number') {
@@ -3035,28 +3035,28 @@ function format_matrix(matrix) {
   return formatted;
 }
 
-function get_mouse_pos(canvas, evt) {
+function getMousePos(canvas, evt) {
   const rect = canvas.getBoundingClientRect();
 
   if (evt.touches) {
     for (let i = 0; i < evt.touches.length; i++) {
       if (evt.touches[i].touchType === 'stylus') {
         return {
-          x: (evt.touches[i].clientX - rect.left) * scale_factor,
-          y: (evt.touches[i].clientY - rect.top) * scale_factor,
+          x: (evt.touches[i].clientX - rect.left) * scaleFactor,
+          y: (evt.touches[i].clientY - rect.top) * scaleFactor,
         };
       }
     }
   }
 
   return {
-    x: (evt.clientX - rect.left) * scale_factor,
-    y: (evt.clientY - rect.top) * scale_factor,
+    x: (evt.clientX - rect.left) * scaleFactor,
+    y: (evt.clientY - rect.top) * scaleFactor,
   };
 }
 
-function constrain_to_grid(p) {
-  const gs = grid_size / 4;
+function constrainToGrid(p) {
+  const gs = gridSize / 4;
   return { x: Math.floor((p.x + gs / 2) / gs) * gs, y: Math.floor((p.y + gs / 2) / gs) * gs };
 }
 
@@ -3070,7 +3070,7 @@ function between(a, b) {
   return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
 }
 
-function rotation_matrix(rx, ry, rz) {
+function rotationMatrix(rx, ry, rz) {
   const Rx = [[1, 0, 0],
     [0, Math.cos(rx), -Math.sin(rx)],
     [0, Math.sin(rx), Math.cos(rx)]];
@@ -3090,7 +3090,7 @@ function sigmoid(x, num, offset, width) {
   return num / (1.0 + Math.exp(-(x + offset) * width));
 }
 
-function ease_in_out(x) {
+function easeInOut(x) {
   return 1.0 / (1.0 + Math.exp(-(x - 0.5) * 10));
 }
 
@@ -3098,14 +3098,14 @@ function copy(d) {
   return JSON.parse(JSON.stringify(d));
 }
 
-function change_frames() {
+function changeFrames() {
   for (let i = 0; i < objs.length; i++) {
     obj = objs[i];
-    if (obj.properties[frame] && obj.properties[next_frame] == null) {
-      obj.properties[next_frame] = copy(obj.properties[frame]);
-      if (next_frame < frame) {
+    if (obj.properties[frame] && obj.properties[nextFrame] == null) {
+      obj.properties[nextFrame] = copy(obj.properties[frame]);
+      if (nextFrame < frame) {
         // make that shit transparent?
-        obj.properties[next_frame].c[3] = 0.0;
+        obj.properties[nextFrame].c[3] = 0.0;
       }
     }
   }
@@ -3124,7 +3124,7 @@ function hexToRgb(hex) {
   ] : null;
 }
 
-function transform_props(key, props, step = 0.2) {
+function transformProps(key, props, step = 0.2) {
   if (key == 'l') {
     props.w += step;
   } else if (key == 'j') {
@@ -3155,26 +3155,26 @@ function interpolate(a, b) {
       const bp = b[key];
 
       interp[key] = {
-        x: (1 - t_ease) * ap.x + t_ease * bp.x,
-        y: (1 - t_ease) * ap.y + t_ease * bp.y,
+        x: (1 - tEase) * ap.x + tEase * bp.x,
+        y: (1 - tEase) * ap.y + tEase * bp.y,
       };
     } else if (key == 'w' || key == 'h' || key == 'r' || key == 'a_s' || key == 'a_e') {
       // interpolate width, height, or rotation
       const aw = a[key];
       const bw = b[key];
-      interp[key] = (1 - t_ease) * aw + t_ease * bw;
+      interp[key] = (1 - tEase) * aw + tEase * bw;
     } else if (key == 'rxyz') {
       const ar = a[key];
       const br = b[key];
       interp[key] = [0, 0, 0];
       for (let i = 0; i < 3; i++) {
-        interp[key][i] = (1 - t_ease) * ar[i] + t_ease * br[i];
+        interp[key][i] = (1 - tEase) * ar[i] + tEase * br[i];
       }
     } else if (key == 'c') {
       // interpolate colors
       const ac = a[key];
       const bc = b[key];
-      interp[key] = interpolate_colors(ac, bc, constrain(t_ease));
+      interp[key] = interpolateColors(ac, bc, constrain(tEase));
     } else if (key == 'path') {
       // interpolate paths
       const ap = a[key];
@@ -3183,15 +3183,15 @@ function interpolate(a, b) {
       const ip = new Array(N);
       for (let i = 0; i < N; i++) {
         const newp = {
-          x: (1 - t_ease) * ap[i].x + t_ease * bp[i].x,
-          y: (1 - t_ease) * ap[i].y + t_ease * bp[i].y,
+          x: (1 - tEase) * ap[i].x + tEase * bp[i].x,
+          y: (1 - tEase) * ap[i].y + tEase * bp[i].y,
         };
         ip[i] = newp;
       }
 
       interp[key] = ip;
     } else if (key == 't') {
-      if (t_ease < 0.5) {
+      if (tEase < 0.5) {
         interp[key] = a[key];
       } else {
         interp[key] = b[key];
@@ -3204,7 +3204,7 @@ function interpolate(a, b) {
   return interp;
 }
 
-function interpolate_colors(ac, bc, interp) {
+function interpolateColors(ac, bc, interp) {
   let same = true;
   const N = ac.length;
   for (let i = 0; i < N; i++) {
@@ -3234,11 +3234,11 @@ function Button(text, pos, callback) {
   this.align = 'left';
   this.selected = false;
 
-  this.width = text.length * grid_size / 4;
-  this.height = grid_size / 4;
+  this.width = text.length * gridSize / 4;
+  this.height = gridSize / 4;
 
   if (this.width == 0) {
-    this.width = grid_size;
+    this.width = gridSize;
   }
 
   this.hovering = function () {
@@ -3268,11 +3268,11 @@ function Button(text, pos, callback) {
 
     if (this.color.length) {
       ctx.fillStyle = this.color;
-      ctx.fillRect(0, -grid_size / 8, grid_size, grid_size / 4);
+      ctx.fillRect(0, -gridSize / 8, gridSize, gridSize / 4);
     }
 
     ctx.textAlign = this.align;
-    ctx.font = font_small;
+    ctx.font = fontSmall;
     ctx.fillText(this.text, 0, 0);
 
     ctx.restore();
@@ -3384,7 +3384,7 @@ function Shape(color, path) {
     for (let i = 0; i < path.length; i++) {
       const p = path[i];
 
-      if (distance(p, mouse) < grid_size / 8) {
+      if (distance(p, mouse) < gridSize / 8) {
         return i;
       }
     }
@@ -3420,7 +3420,7 @@ function Shape(color, path) {
     const { key } = evt;
 
     if (this.selected_indices.length != 0) {
-      this.properties[frame] = transform_props(key, this.properties[frame]);
+      this.properties[frame] = transformProps(key, this.properties[frame]);
     }
 
     return false;
@@ -3449,8 +3449,8 @@ function Shape(color, path) {
       if (tool == 'select') {
         // move all
         const offset = {
-          x: mouse_grid.x - mouse_grid_last.x,
-          y: mouse_grid.y - mouse_grid_last.y,
+          x: mouseGrid.x - mouse_grid_last.x,
+          y: mouseGrid.y - mouse_grid_last.y,
         };
         for (let i = 0; i < this.selected_indices.length; i++) {
           const idx = this.selected_indices[i];
@@ -3516,7 +3516,7 @@ function Shape(color, path) {
       // show selected indices
       if (!presenting && !hidden && (this.selected_indices.indexOf(i) != -1 || i == idx)) {
         ctx.strokeStyle = dark;
-        ctx.strokeRect(p.x - c.x - grid_size / 2, p.y - c.y - grid_size / 2, grid_size, grid_size);
+        ctx.strokeRect(p.x - c.x - gridSize / 2, p.y - c.y - gridSize / 2, gridSize, gridSize);
       }
     }
 
@@ -3526,7 +3526,7 @@ function Shape(color, path) {
         const p1 = path[i];
         const p2 = path[i + 1];
         const b = between(p1, p2);
-        let d = distance(p1, p2) / grid_size;
+        let d = distance(p1, p2) / gridSize;
         d = Math.round(d * 10) / 10;
         ctx.fillText(d, b.x - c.x, b.y - c.y);
       }
@@ -3539,9 +3539,9 @@ function Shape(color, path) {
 
       const theta = Math.atan2(a.y - b.y, a.x - b.x);
       ctx.moveTo(a.x - c.x, a.y - c.y);
-      ctx.lineTo(a.x - c.x + Math.cos(theta - Math.PI * 3 / 4) * grid_size / 2, a.y - c.y + Math.sin(theta - Math.PI * 3 / 4) * grid_size / 2);
+      ctx.lineTo(a.x - c.x + Math.cos(theta - Math.PI * 3 / 4) * gridSize / 2, a.y - c.y + Math.sin(theta - Math.PI * 3 / 4) * gridSize / 2);
       ctx.moveTo(a.x - c.x, a.y - c.y);
-      ctx.lineTo(a.x - c.x + Math.cos(theta + Math.PI * 3 / 4) * grid_size / 2, a.y - c.y + Math.sin(theta + Math.PI * 3 / 4) * grid_size / 2);
+      ctx.lineTo(a.x - c.x + Math.cos(theta + Math.PI * 3 / 4) * gridSize / 2, a.y - c.y + Math.sin(theta + Math.PI * 3 / 4) * gridSize / 2);
     }
   };
 
@@ -3587,7 +3587,7 @@ function Shape(color, path) {
 
   this.render = function (ctx) {
     const a = this.properties[frame];
-    const b = this.properties[next_frame];
+    const b = this.properties[nextFrame];
 
     if (!a) {
       return;
@@ -3701,7 +3701,7 @@ function Circle(color, pos) {
       return false;
     }
 
-    return distance(props.p, mouse) < grid_size / 2;
+    return distance(props.p, mouse) < gridSize / 2;
   };
 
   this.in_rect = function (x, y, x2, y2) {
@@ -3740,7 +3740,7 @@ function Circle(color, pos) {
         p.a_e += step;
       }
     } else {
-      this.properties[frame] = transform_props(key, this.properties[frame]);
+      this.properties[frame] = transformProps(key, this.properties[frame]);
     }
 
     return false;
@@ -3765,8 +3765,8 @@ function Circle(color, pos) {
       // move
       const props = this.properties[frame];
       const offset = {
-        x: mouse_grid.x - mouse_grid_last.x,
-        y: mouse_grid.y - mouse_grid_last.y,
+        x: mouseGrid.x - mouse_grid_last.x,
+        y: mouseGrid.y - mouse_grid_last.y,
       };
       const { p } = props;
       this.properties[frame].p = { x: p.x + offset.x, y: p.y + offset.y };
@@ -3812,7 +3812,7 @@ function Circle(color, pos) {
 
   this.render = function (ctx) {
     const a = this.properties[frame];
-    const b = this.properties[next_frame];
+    const b = this.properties[nextFrame];
 
     if (!a) {
       return;
@@ -3844,7 +3844,7 @@ function Circle(color, pos) {
     if (!presenting && props.c[3] != 0 && (this.selected || this.near_mouse())) {
       ctx.beginPath();
       ctx.strokeStyle = dark;
-      ctx.strokeRect(props.p.x - grid_size / 4, props.p.y - grid_size / 4, grid_size / 2, grid_size / 2);
+      ctx.strokeRect(props.p.x - gridSize / 4, props.p.y - gridSize / 4, gridSize / 2, gridSize / 2);
       ctx.stroke();
     }
   };
@@ -3875,7 +3875,7 @@ function Text(text, pos) {
 
   this.select = function () {
     this.selected = true;
-    formula_text.value = this.properties[frame].t;
+    formulaText.value = this.properties[frame].t;
   };
 
   this.is_selected = function () {
@@ -3914,22 +3914,22 @@ function Text(text, pos) {
 
     const text = props.t;
     const s = this.selection_indices();
-    const new_text = text.slice(0, s.s) + replace + text.slice(s.e, text.length);
+    const newText = text.slice(0, s.s) + replace + text.slice(s.e, text.length);
 
     this.cursor = s.s + replace.length;
     this.cursor_selection = this.cursor;
 
-    return new_text;
+    return newText;
   };
 
-  this.paste_text = function (text_copied) {
+  this.paste_text = function (textCopied) {
     if (this.is_text_selected()) {
       // wipe out some text in between
-      this.change_text(this.replace_selected_text(text_copied));
+      this.change_text(this.replace_selected_text(textCopied));
     } else {
       const text = this.properties[frame].t;
-      this.properties[frame].t = text.slice(0, this.cursor) + text_copied + text.slice(this.cursor, text.length);
-      this.cursor += text_copied.length;
+      this.properties[frame].t = text.slice(0, this.cursor) + textCopied + text.slice(this.cursor, text.length);
+      this.cursor += textCopied.length;
       this.cursor_selection = this.cursor;
     }
   };
@@ -3950,7 +3950,7 @@ function Text(text, pos) {
       return 0;
     }
 
-    const idx = Math.round((x - props.p.x) / char_size);
+    const idx = Math.round((x - props.p.x) / charSize);
     return Math.max(0, Math.min(idx, props.t.length));
   };
 
@@ -4021,7 +4021,7 @@ function Text(text, pos) {
     }
 
     if (transition.transitioning) {
-      return this.properties[frame].c[3] == 0 && this.properties[next_frame].c[3] == 0;
+      return this.properties[frame].c[3] == 0 && this.properties[nextFrame].c[3] == 0;
     }
 
     return this.properties[frame].c[3] == 0;
@@ -4062,7 +4062,7 @@ function Text(text, pos) {
 
       const l = math.eval(t.substring(t.indexOf('['), t.indexOf(']') + 1));
 
-      draw_network(l._data, [p.x, p.y]);
+      drawNetwork(l._data, [p.x, p.y]);
 
       // hide
       this.properties[frame].c[3] = 0;
@@ -4083,22 +4083,22 @@ function Text(text, pos) {
       // create a bunch of matrix numbers
       const pad = 24;
 
-      const max_width = mat_num_width - 20;
+      const maxWidth = matNumWidth - 20;
 
-      const matrix = format_matrix(this.matrix_vals);
+      const matrix = formatMatrix(this.matrix_vals);
 
       for (let i = 0; i < matrix.length; i++) {
         for (let j = 0; j < matrix[i].length; j++) {
           const newT = new Text(matrix[i][j], {
-            x: p.x + j * (mat_num_width + pad) + 110,
-            y: p.y + i * grid_size,
+            x: p.x + j * (matNumWidth + pad) + 110,
+            y: p.y + i * gridSize,
           });
           objs.push(newT);
         }
       }
 
-      const size = matrix_size(matrix);
-      draw_brackets(0, 0, size[0], size[1]);
+      const size = matrixSize(matrix);
+      drawBrackets(0, 0, size[0], size[1]);
 
       return;
     }
@@ -4108,12 +4108,12 @@ function Text(text, pos) {
     for (let i = 0; i < N; i++) {
       const c = t[i];
       if (c == ' ') {
-        xoff += grid_size / 2;
+        xoff += gridSize / 2;
         continue;
       }
       const newT = new Text(c, { x: p.x + xoff, y: p.y });
       objs.push(newT);
-      xoff += grid_size / 2;
+      xoff += gridSize / 2;
     }
 
     this.deleted = true;
@@ -4128,7 +4128,7 @@ function Text(text, pos) {
     let text = this.properties[frame].t;
 
     if (ctrl) {
-      this.properties[frame] = transform_props(key, this.properties[frame]);
+      this.properties[frame] = transformProps(key, this.properties[frame]);
       return true;
     }
 
@@ -4136,7 +4136,7 @@ function Text(text, pos) {
       if (this.is_selected()) {
         if (key == 'c') {
           // copy
-          text_copied = this.text_selected();
+          textCopied = this.text_selected();
 
           // hacky but works
           const el = document.createElement('textarea');
@@ -4172,13 +4172,13 @@ function Text(text, pos) {
           const key = keys[i];
 
           if (key.indexOf(fn) == 0) {
-            let new_text = text.split(fn)[0] + keys[i];
+            let newText = text.split(fn)[0] + keys[i];
             if ((`${math[key]}`).split('\n')[0].indexOf('(') != -1) {
-              new_text += '(';
+              newText += '(';
             }
 
-            this.change_text(new_text);
-            this.cursor = new_text.length;
+            this.change_text(newText);
+            this.cursor = newText.length;
             this.cursor_selection = this.cursor;
             break;
           }
@@ -4199,7 +4199,7 @@ function Text(text, pos) {
       if (shift) {
         // create a new text below this one
         const { p } = this.properties[frame];
-        const newT = new Text('', { x: p.x, y: p.y + char_size * 2 });
+        const newT = new Text('', { x: p.x, y: p.y + charSize * 2 });
         objs.push(newT);
         newT.select();
         save_state();
@@ -4238,8 +4238,8 @@ function Text(text, pos) {
         return true;
       }
 
-      const new_obj = texts[i - 1];
-      new_obj.selected = true;
+      const newObj = texts[i - 1];
+      newObj.selected = true;
       this.selected = false;
       return true;
     } if (key == 'ArrowDown') {
@@ -4257,8 +4257,8 @@ function Text(text, pos) {
         return true;
       }
 
-      const new_obj = texts[i + 1];
-      new_obj.selected = true;
+      const newObj = texts[i + 1];
+      newObj.selected = true;
       this.selected = false;
       return true;
     }
@@ -4311,7 +4311,7 @@ function Text(text, pos) {
     ctx.save();
 
     const a = this.properties[frame];
-    const b = this.properties[next_frame];
+    const b = this.properties[nextFrame];
 
     let i;
     if (transition.transitioning) {
@@ -4343,9 +4343,9 @@ function Text(text, pos) {
       const val = this.cargs[0].eval(parser.scope);
 
       // only display the value if its not an assignment or constant
-      const op_type = math.parse(this.args[0]).type;
+      const opType = math.parse(this.args[0]).type;
 
-      if (op_type.indexOf('Assignment') == -1 && op_type != 'ConstantNode') {
+      if (opType.indexOf('Assignment') == -1 && opType != 'ConstantNode') {
         const type = typeof val;
 
         // set display text
@@ -4354,7 +4354,7 @@ function Text(text, pos) {
             // nothing
             this.text_val = `=${val}`;
           } else {
-            this.text_val = `=${pretty_round(val)}`;
+            this.text_val = `=${prettyRound(val)}`;
           }
         } else if (type == 'boolean') {
           this.text_val = ` = ${val}`;
@@ -4368,7 +4368,7 @@ function Text(text, pos) {
               // nothing
               this.text_val = `=${val}`;
             } else {
-              this.text_val = `=${pretty_round(val.re).toString()} + ${pretty_round(val.im).toString()}i`;
+              this.text_val = `=${prettyRound(val.re).toString()} + ${prettyRound(val.im).toString()}i`;
             }
           }
         } else if (val) {
@@ -4439,9 +4439,9 @@ function Text(text, pos) {
   };
 
   this.var_name = function () {
-    let var_name = this.args[0].split('=')[0];
-    var_name = var_name.replace(/\s+/g, '');
-    return var_name;
+    let varName = this.args[0].split('=')[0];
+    varName = varName.replace(/\s+/g, '');
+    return varName;
   };
 
   this.mouse_drag = function (evt) {
@@ -4454,38 +4454,38 @@ function Text(text, pos) {
       return false;
     }
 
-    if (Math.abs(mouse.x - mouse_start.x) > char_size || Math.abs(mouse.y - mouse_start.y) > char_size) {
+    if (Math.abs(mouse.x - mouseStart.x) > charSize || Math.abs(mouse.y - mouseStart.y) > charSize) {
       this.dragged = true;
     }
 
     if (presenting) {
       if (this.args && this.args[0] && this.args[0]._data) {
 
-      } else if (this.command == 'slide' && this.point_in_text_rect(mouse_start)) {
+      } else if (this.command == 'slide' && this.point_in_text_rect(mouseStart)) {
         // change the value of the variable
-        const var_name = this.var_name();
+        const varName = this.var_name();
 
-        let old_val = 0;
+        let oldVal = 0;
         try {
-          old_val = parser.eval(var_name);
+          oldVal = parser.eval(varName);
         } catch (e) {
 
         }
 
-        if (isNaN(old_val)) {
-          old_val = 0;
+        if (isNaN(oldVal)) {
+          oldVal = 0;
         }
 
-        let delta = (mouse.x - mouse_last.x) / grid_size;
+        let delta = (mouse.x - mouseLast.x) / gridSize;
         if (meta || ctrl) {
           delta *= 0.01;
         }
 
-        const new_val = old_val + delta;
-        this.text_val = `=${pretty_round(new_val)}`;
+        const newVal = oldVal + delta;
+        this.text_val = `=${prettyRound(newVal)}`;
 
         try {
-          parser.set(var_name, new_val);
+          parser.set(varName, newVal);
         } catch (error) {
           console.log(`slide error: ${error}`);
         }
@@ -4496,14 +4496,14 @@ function Text(text, pos) {
       const { p } = props;
 
       this.cursor = this.char_index_at_x(mouse.x);
-      this.cursor_selection = this.char_index_at_x(mouse_start.x);
+      this.cursor_selection = this.char_index_at_x(mouseStart.x);
 
       this.constrain_cursors();
       this.dragged = true;
     } else if (tool == 'select' && (this.near_mouse || this.is_selected())) {
       // shift it
       const { p } = props;
-      const offset = { x: mouse_grid.x - mouse_grid_last.x, y: mouse_grid.y - mouse_grid_last.y };
+      const offset = { x: mouseGrid.x - mouse_grid_last.x, y: mouseGrid.y - mouse_grid_last.y };
       props.p = { x: p.x + offset.x, y: p.y + offset.y };
 
       return true;
@@ -4540,12 +4540,12 @@ function Text(text, pos) {
 
     if (this.command == 'f' && !this.is_selected()) {
       const fn = t.slice(this.command.length + 1); // +1 for semicolon
-      size = draw_fn(fn);
+      size = drawFn(fn);
     } else {
       const N = t.length;
-      size = { w: N * char_size, h: char_size * 2 };
+      size = { w: N * charSize, h: charSize * 2 };
 
-      size = { w: draw_simple(t), h: char_size * 2 };
+      size = { w: drawSimple(t), h: charSize * 2 };
 
       let plevel = 0;
       for (let i = 0; i < N; i++) {
@@ -4563,7 +4563,7 @@ function Text(text, pos) {
           if (t[i] in brackets) p2 += brackets[t[i]];
 
           if (p2 == plevel - 1) {
-            ctx.fillText(t[i], i * char_size, 0);
+            ctx.fillText(t[i], i * charSize, 0);
             break;
           }
         }
@@ -4573,7 +4573,7 @@ function Text(text, pos) {
           if (t[i] in brackets) p2 += brackets[t[i]];
 
           if (p2 == plevel + 1) {
-            ctx.fillText(t[i], i * char_size, 0);
+            ctx.fillText(t[i], i * charSize, 0);
             break;
           }
         }
@@ -4588,14 +4588,14 @@ function Text(text, pos) {
       ctx.translate(135, 0);
 
       ctx.translate(-100, -20);
-      const formatted = format_matrix(this.matrix_vals);
-      draw_matrix(formatted);
+      const formatted = formatMatrix(this.matrix_vals);
+      drawMatrix(formatted);
 
       ctx.restore();
     } else if (!this.selected && this.text_val && this.text_val.length) {
       ctx.save();
       ctx.translate(size.w, 0);
-      size.w += draw_simple(this.text_val);
+      size.w += drawSimple(this.text_val);
       ctx.restore();
     }
 
@@ -4610,13 +4610,13 @@ function Text(text, pos) {
     // replace @ with anonymous fn name
     if (text && text.length) {
       const split = text.split('@');
-      let new_t = '';
+      let newT = '';
       const N = split.length;
       for (let i = 0; i < N - 1; i++) {
-        new_t += `${split[i]}anon${guid().slice(0, 8)}`;
+        newT += `${split[i]}anon${guid().slice(0, 8)}`;
       }
-      new_t += split[N - 1];
-      text = new_t;
+      newT += split[N - 1];
+      text = newT;
     }
 
     if (!text) {
@@ -4662,11 +4662,11 @@ function Text(text, pos) {
       return;
     }
 
-    const yoff = grid_size * 3;
-    const xoff = grid_size * 3;
-    const op_size = grid_size;
+    const yoff = gridSize * 3;
+    const xoff = gridSize * 3;
+    const opSize = gridSize;
 
-    const p = { x: props.p.x, y: props.p.y + grid_size };
+    const p = { x: props.p.x, y: props.p.y + gridSize };
     let stuff = [t];
 
     if (!stuff) {
@@ -4674,19 +4674,19 @@ function Text(text, pos) {
     }
 
     while (true) {
-      let next_stuff = [];
-      let added_all_spaces = true;
+      let nextStuff = [];
+      let addedAllSpaces = true;
       for (let i = 0; i < stuff.length; i++) {
         const o = stuff[i];
         if (o.args) {
-          next_stuff = next_stuff.concat(o.args);
-          added_all_spaces = false;
+          nextStuff = nextStuff.concat(o.args);
+          addedAllSpaces = false;
         } else {
-          next_stuff.push(' ');
+          nextStuff.push(' ');
         }
       }
 
-      let lx = -(next_stuff.length - 1) / 2 * xoff;
+      let lx = -(nextStuff.length - 1) / 2 * xoff;
       let li = 0;
 
       for (let i = 0; i < stuff.length; i++) {
@@ -4707,7 +4707,7 @@ function Text(text, pos) {
             text = o.op;
           }
 
-          if (distance(mouse, np) < grid_size) {
+          if (distance(mouse, np) < gridSize) {
             text = o.toString();
           }
 
@@ -4718,7 +4718,7 @@ function Text(text, pos) {
           ctx.fillText(text, np.x, np.y);
 
           for (let j = 0; j < o.args.length; j++) {
-            while (next_stuff[li] == ' ') {
+            while (nextStuff[li] == ' ') {
               lx += xoff;
               li += 1;
             }
@@ -4729,8 +4729,8 @@ function Text(text, pos) {
             diff = { x: diff.x / n, y: diff.y / n };
 
             ctx.beginPath();
-            ctx.moveTo(np.x + diff.x * op_size, np.y + diff.y * op_size);
-            ctx.lineTo(argp.x - diff.x * op_size, argp.y - diff.y * op_size);
+            ctx.moveTo(np.x + diff.x * opSize, np.y + diff.y * opSize);
+            ctx.lineTo(argp.x - diff.x * opSize, argp.y - diff.y * opSize);
             ctx.stroke();
 
             lx += xoff;
@@ -4753,15 +4753,15 @@ function Text(text, pos) {
         }
       }
 
-      if (next_stuff.length == 0) {
+      if (nextStuff.length == 0) {
         break;
       }
 
-      if (added_all_spaces) {
+      if (addedAllSpaces) {
         break;
       }
 
-      stuff = next_stuff;
+      stuff = nextStuff;
       p.y += yoff;
     }
 
@@ -4790,7 +4790,7 @@ function Text(text, pos) {
       return;
     }
 
-    let b = this.properties[next_frame];
+    let b = this.properties[nextFrame];
 
     let i;
     if (transition.transitioning) {
@@ -4819,18 +4819,18 @@ function Text(text, pos) {
     ctx.fillStyle = rgbToHex(i.c);
     ctx.strokeStyle = rgbToHex(i.c);
 
-    let should_draw_text = true;
+    let shouldDrawText = true;
 
     const c = this.command;
     if (c == 'tree') {
       this.draw_tree(ctx, i);
       if (presenting) {
-        should_draw_text = false;
+        shouldDrawText = false;
       }
     }
 
     if (presenting && (a.ph || (b && b.ph))) {
-      should_draw_text = false;
+      shouldDrawText = false;
     }
 
     // text
@@ -4849,22 +4849,22 @@ function Text(text, pos) {
         ctx.drawImage(this.image, -this.image.width / 2, -this.image.height / 2);
         this.size = { w: this.image.width * i.w, h: this.image.height * i.h };
       }
-    } else if (should_draw_text) {
+    } else if (shouldDrawText) {
       if (!b) {
         b = a;
       }
 
-      const fading_in = (a.c[3] == 0 && b.c[3] == 1);
-      const fading_out = (a.c[3] == 1 && b.c[3] == 0);
+      const fadingIn = (a.c[3] == 0 && b.c[3] == 1);
+      const fadingOut = (a.c[3] == 1 && b.c[3] == 0);
 
       let at = a.t;
       let bt = b.t;
 
       if (transition.transitioning) {
-        if (fading_in) {
+        if (fadingIn) {
           at = b.t;
           bt = b.t;
-        } else if (fading_out) {
+        } else if (fadingOut) {
           at = a.t;
           bt = a.t;
         }
@@ -4874,7 +4874,7 @@ function Text(text, pos) {
 
       if (text_different && transition.transitioning) {
         // changing text
-        const constrained = constrain(t_ease);
+        const constrained = constrain(tEase);
         ctx.globalAlpha = 1 - constrained;
         this.draw_text(ctx, a.t);
         ctx.globalAlpha = constrained;
@@ -4897,17 +4897,17 @@ function Text(text, pos) {
 
     if (!presenting && this.is_selected()) {
       // draw cursor
-      ctx.fillRect(this.cursor * char_size, -grid_size / 2, 2, grid_size);
+      ctx.fillRect(this.cursor * charSize, -gridSize / 2, 2, gridSize);
       if (this.is_text_selected()) {
         // draw selection
         const s = this.selection_indices();
 
-        const xstart = s.s * char_size;
-        const xend = s.e * char_size;
+        const xstart = s.s * charSize;
+        const xend = s.e * charSize;
 
         ctx.save();
         ctx.globalAlpha = 0.1;
-        ctx.fillRect(xstart, -grid_size / 2, xend - xstart, grid_size);
+        ctx.fillRect(xstart, -gridSize / 2, xend - xstart, gridSize);
         ctx.restore();
       }
 
@@ -4925,12 +4925,12 @@ function Text(text, pos) {
 
             if (key.indexOf(fn) == 0) {
               ctx.save();
-              ctx.translate(0, char_size * 2 + yoff);
+              ctx.translate(0, charSize * 2 + yoff);
               ctx.scale(0.5, 0.5);
               ctx.globalAlpha = 0.5;
-              draw_simple(`${key}: ${(`${math[key]}`).split('\n')[0]}`);
+              drawSimple(`${key}: ${(`${math[key]}`).split('\n')[0]}`);
               ctx.restore();
-              yoff += grid_size;
+              yoff += gridSize;
             }
           }
         }
@@ -4956,10 +4956,10 @@ function Text(text, pos) {
     for (let i = 0; i < text.length; i++) {
       if (text[i] == '*') {
         js += 'ctx.beginPath();\n';
-        js += `ctx.arc(${i * char_size + char_size / 2}, 0, 3, 0, ${pi2});\n`;
+        js += `ctx.arc(${i * charSize + charSize / 2}, 0, 3, 0, ${pi2});\n`;
         js += 'ctx.fill();\n';
       } else {
-        js += `ctx.fillText("${text[i]}", ${i * char_size}, 0);\n`;
+        js += `ctx.fillText("${text[i]}", ${i * charSize}, 0);\n`;
       }
     }
 
@@ -5066,7 +5066,7 @@ function Network(pos) {
       return false;
     }
 
-    return distance(props.p, mouse) < grid_size / 2;
+    return distance(props.p, mouse) < gridSize / 2;
   };
 
   this.in_rect = function (x, y, x2, y2) {
@@ -5104,8 +5104,8 @@ function Network(pos) {
       // move
       const props = this.properties[frame];
       const offset = {
-        x: mouse_grid.x - mouse_grid_last.x,
-        y: mouse_grid.y - mouse_grid_last.y,
+        x: mouseGrid.x - mouse_grid_last.x,
+        y: mouseGrid.y - mouse_grid_last.y,
       };
       const { p } = props;
       this.properties[frame].p = { x: p.x + offset.x, y: p.y + offset.y };
@@ -5255,7 +5255,7 @@ function Network(pos) {
 
   this.render = function (ctx) {
     const a = this.properties[frame];
-    const b = this.properties[next_frame];
+    const b = this.properties[nextFrame];
 
     if (!a) {
       return;
@@ -5274,7 +5274,7 @@ function Network(pos) {
     if (!presenting && props.c[3] != 0 && (this.selected || this.near_mouse())) {
       ctx.beginPath();
       ctx.strokeStyle = dark;
-      ctx.strokeRect(props.p.x - grid_size / 4, props.p.y - grid_size / 4, grid_size / 2, grid_size / 2);
+      ctx.strokeRect(props.p.x - gridSize / 4, props.p.y - gridSize / 4, gridSize / 2, gridSize / 2);
       ctx.stroke();
     }
   };
@@ -5371,12 +5371,12 @@ function Camera() {
       let r = props.rxyz;
 
       if (!this.dragging_rotate) {
-        a = r[1] - (mouse.y - mouse_last.y) / 100;
-        b = r[2] - (mouse.x - mouse_last.x) / 100;
+        a = r[1] - (mouse.y - mouseLast.y) / 100;
+        b = r[2] - (mouse.x - mouseLast.x) / 100;
         r = [r[0], a, b];
       } else {
         const angle = math.atan2(mouse.y - props.p.y, mouse.x - props.p.x);
-        const angle2 = math.atan2(mouse_last.y - props.p.y, mouse_last.x - props.p.x);
+        const angle2 = math.atan2(mouseLast.y - props.p.y, mouseLast.x - props.p.x);
         let c = (angle - angle2);
 
         if (Math.abs(c) > 1) {
@@ -5392,7 +5392,7 @@ function Camera() {
     } else {
       // translate
       const { p } = props;
-      const offset = { x: mouse_grid.x - mouse_grid_last.x, y: mouse_grid.y - mouse_grid_last.y };
+      const offset = { x: mouseGrid.x - mouse_grid_last.x, y: mouseGrid.y - mouse_grid_last.y };
       props.p = { x: p.x + offset.x, y: p.y + offset.y };
     }
   };
@@ -5410,12 +5410,12 @@ function Camera() {
     }
 
     const { key } = evt;
-    this.properties[frame] = transform_props(key, this.properties[frame], 0.01);
+    this.properties[frame] = transformProps(key, this.properties[frame], 0.01);
   };
 
   this.update_props = function () {
     const a = this.properties[frame];
-    const b = this.properties[next_frame];
+    const b = this.properties[nextFrame];
 
     if (!a) {
       this.properties[frame] = copy(this.default_props);
@@ -5424,7 +5424,7 @@ function Camera() {
     }
 
     if (a && !b) {
-      this.properties[next_frame] = copy(a);
+      this.properties[nextFrame] = copy(a);
       this.props = a;
       return;
     }
@@ -5443,7 +5443,7 @@ function Camera() {
     const ry = this.props.rxyz[1];
     const rz = this.props.rxyz[2];
 
-    this.R = rotation_matrix(rx, ry, rz);
+    this.R = rotationMatrix(rx, ry, rz);
   };
 
   this.graph_to_screen = function (x, y, z) {
@@ -5479,8 +5479,8 @@ function Camera() {
                 m = 1;
             } */
 
-      p[i][0] = x * this.props.w * grid_size + this.props.p.x;
-      p[i][1] = -y * this.props.h * grid_size + this.props.p.y;
+      p[i][0] = x * this.props.w * gridSize + this.props.p.x;
+      p[i][1] = -y * this.props.h * gridSize + this.props.p.y;
       p[i][2] = z;
     }
 
@@ -5488,7 +5488,7 @@ function Camera() {
   };
 
   this.screen_to_graph = function (p) {
-    return { x: (p.x - this.props.p.x) / (grid_size * this.props.w), y: -(p.y - this.props.p.y) / (grid_size * this.props.h) };
+    return { x: (p.x - this.props.p.x) / (gridSize * this.props.w), y: -(p.y - this.props.p.y) / (gridSize * this.props.h) };
   };
 
   this.update_props();
@@ -5528,7 +5528,7 @@ function guidIndex(objs, obj) {
 
 function state_to_string() {
   return JSON.stringify({
-    num_frames, frame, objs, cam, pen,
+    num_frames: numFrames, frame, objs, cam, pen,
   });
 }
 
@@ -5537,7 +5537,7 @@ function str_to_state(str) {
   const arr = dict.objs;
 
   if (dict.num_frames) {
-    num_frames = dict.num_frames;
+    numFrames = dict.num_frames;
   }
 
   if (dict.frame) {
@@ -5627,10 +5627,10 @@ function text_array_to_objs(arr, keep_animation) {
 
 function Frames(pos) {
   this.pos = pos;
-  this.size = grid_size / 2;
+  this.size = gridSize / 2;
 
   this.frame_pos = function (i) {
-    const size = (this.size + grid_size / 4);
+    const size = (this.size + gridSize / 4);
     let yoffset = (i - 1) * size;
     let xoff = 0;
     const hcon = size * 30;
@@ -5638,17 +5638,17 @@ function Frames(pos) {
       yoffset -= hcon;
       xoff++;
     }
-    return { x: this.pos.x + xoff * grid_size * 2 / 3, y: this.pos.y + yoffset + grid_size / 2 };
+    return { x: this.pos.x + xoff * gridSize * 2 / 3, y: this.pos.y + yoffset + gridSize / 2 };
   };
 
   this.create_buttons = function () {
     this.buttons = [];
-    for (let i = 1; i <= num_frames; i++) {
+    for (let i = 1; i <= numFrames; i++) {
       const newb = new Button(`${i}`, this.frame_pos(i), null);
       this.buttons.push(newb);
     }
-    this.buttons.push(new Button('-', this.frame_pos(num_frames + 1), null));
-    this.buttons.push(new Button('+', this.frame_pos(num_frames + 2), null));
+    this.buttons.push(new Button('-', this.frame_pos(numFrames + 1), null));
+    this.buttons.push(new Button('+', this.frame_pos(numFrames + 2), null));
   };
 
   this.create_buttons();
@@ -5674,11 +5674,11 @@ function Frames(pos) {
           // remove selected frame
           // copy properties from next frames
           // decrement number of frames
-          if (num_frames == 1) {
+          if (numFrames == 1) {
             break;
           }
 
-          for (let f = frame; f <= num_frames; f++) {
+          for (let f = frame; f <= numFrames; f++) {
             for (let i = 0; i < objs.length; i++) {
               const obj = objs[i];
               if (typeof obj.copy_properties === 'function') {
@@ -5697,7 +5697,7 @@ function Frames(pos) {
             }
           }
 
-          num_frames -= 1;
+          numFrames -= 1;
           this.create_buttons();
           return true;
         } if (i == this.buttons.length - 1) {
@@ -5715,7 +5715,7 @@ function Frames(pos) {
     const { key } = evt;
 
     if (key == 'ArrowRight') {
-      if (!presenting && frame + 1 > num_frames) {
+      if (!presenting && frame + 1 > numFrames) {
         // create a new one
         insert_frame();
       }
@@ -5752,8 +5752,8 @@ function Frames(pos) {
 }
 
 function insert_frame() {
-  num_frames += 1;
-  for (let f = num_frames; f >= frame; f--) {
+  numFrames += 1;
+  for (let f = numFrames; f >= frame; f--) {
     for (let i = 0; i < objs.length; i++) {
       const obj = objs[i];
       if (typeof obj.copy_properties === 'function') {
@@ -5930,7 +5930,7 @@ function Menu(pos) {
   })));
 
   this.buttons.push(new Button('frame', { x: 0, y: 0 }, ((b) => {
-    view_frame = !view_frame;
+    viewFrame = !viewFrame;
   })));
 
   this.buttons.push(new Button('debug', { x: 0, y: 0 }, ((b) => {
@@ -5974,7 +5974,7 @@ function Menu(pos) {
 
   for (let i = 0; i < this.buttons.length; i++) {
     const b = this.buttons[i];
-    b.pos = { x: this.pos.x, y: this.pos.y + i * grid_size * 0.6 };
+    b.pos = { x: this.pos.x, y: this.pos.y + i * gridSize * 0.6 };
   }
 
   this.mouse_up = function (evt) {
@@ -6013,9 +6013,9 @@ function Transition() {
       return;
     }
 
-    t_percent = 0.0;
-    t_ease = 0.0;
-    t_in_out = 1.0;
+    tPercent = 0.0;
+    tEase = 0.0;
+    tInOut = 1.0;
     this.steps = steps;
     this.target_frame = target_frame;
     this.transitioning = true;
@@ -6025,16 +6025,16 @@ function Transition() {
   this.update = function () {
     if (this.transitioning) {
       this.step += 1;
-      t_percent = this.step / this.steps;
-      t_in_out = -math.cos(t_percent * 2 * math.PI - math.PI) / 2 + 0.5;
-      parser.set('_t', t_percent);
-      t_ease = ease_in_out(t_percent);
-      parser.set('_tt', t_ease);
-      t_ease = sigmoid(t_percent, 1.2, -0.4, 14) - sigmoid(t_percent, 0.2, -0.6, 15);
+      tPercent = this.step / this.steps;
+      tInOut = -math.cos(tPercent * 2 * math.PI - math.PI) / 2 + 0.5;
+      parser.set('_t', tPercent);
+      tEase = easeInOut(tPercent);
+      parser.set('_tt', tEase);
+      tEase = sigmoid(tPercent, 1.2, -0.4, 14) - sigmoid(tPercent, 0.2, -0.6, 15);
       if (this.step >= this.steps) {
-        t_percent = 1.0;
-        t_in_out = 1.0;
-        t_ease = 1.0;
+        tPercent = 1.0;
+        tInOut = 1.0;
+        tEase = 1.0;
         this.completion(this.target_frame);
         this.step = 0;
         this.transitioning = false;
@@ -6081,7 +6081,7 @@ function Pen() {
     if (tool == 'pen') {
       this.path_nearby_idx = -1;
 
-      if (mouse_down) {
+      if (mouseDown) {
         this.path.push([mouse.x, mouse.y]);
       }
 
@@ -6171,14 +6171,14 @@ function Pen() {
 
     if (transition.transitioning) {
       // fade in out
-      ctx.globalAlpha = -math.cos(t_percent * 2 * math.PI - math.PI) / 2 + 0.5;
-      if (t_percent > 0.5) {
-        frame_to_draw = next_frame;
+      ctx.globalAlpha = -math.cos(tPercent * 2 * math.PI - math.PI) / 2 + 0.5;
+      if (tPercent > 0.5) {
+        frame_to_draw = nextFrame;
       }
 
-      if (!this.drawings[next_frame]) {
+      if (!this.drawings[nextFrame]) {
         // fade out
-        ctx.globalAlpha = 1 - t_percent;
+        ctx.globalAlpha = 1 - tPercent;
         frame_to_draw = frame;
       }
     }
@@ -6223,7 +6223,7 @@ function Pen() {
 }
 
 function constrain_frame(f) {
-  return Math.max(1, Math.min(num_frames, f));
+  return Math.max(1, Math.min(numFrames, f));
 }
 
 function constrain(v) {
@@ -6231,10 +6231,10 @@ function constrain(v) {
 }
 
 function loop_frame(f) {
-  if (f >= num_frames + 1) {
+  if (f >= numFrames + 1) {
     return 1;
   } if (f < 1) {
-    return num_frames;
+    return numFrames;
   }
 
   return f;
@@ -6252,16 +6252,16 @@ function draw_axes(ctx) {
 
   // do a fade in and out
   if (transition.transitioning) {
-    csys_next_style = cam.properties[next_frame].style;
+    csys_next_style = cam.properties[nextFrame].style;
 
     if (csys_next_style != null && csys_next_style != csys_style) {
       // changing text
-      const constrained = constrain(t_ease);
+      const constrained = constrain(tEase);
       ctx.globalAlpha = Math.cos(constrained * 2 * Math.PI) / 2 + 0.5;
       if (constrained >= 0.5) {
         csys_style = csys_next_style;
-        if (cam.properties[next_frame]) {
-          props = cam.properties[next_frame];
+        if (cam.properties[nextFrame]) {
+          props = cam.properties[nextFrame];
         }
       }
     }
@@ -6287,11 +6287,11 @@ function draw_axes(ctx) {
         ctx.stroke();
       }
     } else {
-      const w = win_width * 2;
-      const h = win_height * 2;
+      const w = winWidth * 2;
+      const h = winHeight * 2;
 
-      const dx = grid_size * props.w;
-      const dy = grid_size * props.h;
+      const dx = gridSize * props.w;
+      const dy = gridSize * props.h;
 
       const p = cam.graph_to_screen(0, 0, 0);
 
@@ -6375,7 +6375,7 @@ function transition_with_next(next) {
     return;
   }
 
-  if (next > num_frames) {
+  if (next > numFrames) {
     return;
   }
 
@@ -6392,10 +6392,10 @@ function transition_with_next(next) {
     return;
   }
 
-  new_line = null;
-  next_frame = next;
-  change_frames();
-  let steps = t_steps;
+  newLine = null;
+  nextFrame = next;
+  changeFrames();
+  let steps = tSteps;
   if (!presenting || meta || ctrl) {
     // make it instant when menu open
     steps = 0;
@@ -6421,7 +6421,7 @@ function transition_with_next(next) {
 
 function enter_select() {
   tool = 'select';
-  new_line = null;
+  newLine = null;
 }
 
 function draw_cursor() {
@@ -6442,7 +6442,7 @@ function draw_cursor() {
 
     ctx.stroke();
     ctx.restore();
-  } else if (presenting && mouse_time > 0) {
+  } else if (presenting && mouseTime > 0) {
     // draw a cursor
 
     const mx = mouse.x;
@@ -6453,8 +6453,8 @@ function draw_cursor() {
     ctx.strokeStyle = dark;
     ctx.beginPath();
 
-    if (mouse_down) {
-      mouse_time = mouse_duration;
+    if (mouseDown) {
+      mouseTime = mouseDuration;
 
       ctx.arc(0, 0, 10, 0, pi2, 0);
     } else {
@@ -6483,12 +6483,12 @@ window.onload = function () {
   objs = [];
 
   c = document.createElement('canvas');
-  win_width = window.innerWidth;
-  win_height = window.innerHeight;
-  c.width = win_width * scale_factor;
-  c.height = win_height * scale_factor;
-  c.style.width = win_width;
-  c.style.height = win_height;
+  winWidth = window.innerWidth;
+  winHeight = window.innerHeight;
+  c.width = winWidth * scaleFactor;
+  c.height = winHeight * scaleFactor;
+  c.style.width = winWidth;
+  c.style.height = winHeight;
 
   ctx = c.getContext('2d');
   ctx.fillStyle = dark;
@@ -6523,9 +6523,9 @@ window.onload = function () {
     objs = objs.concat(text_array_to_objs(arr, false));
   };
 
-  formula_text = document.getElementById('formula_text');
+  formulaText = document.getElementById('formula_text');
   document.getElementById('load_clear_formula_text').onclick = function (evt) {
-    const t = formula_text.value;
+    const t = formulaText.value;
     for (let i = 0; i < objs.length; i++) {
       const obj = objs[i];
       if (typeof obj.change_text === 'function' && obj.is_selected()) {
@@ -6534,7 +6534,7 @@ window.onload = function () {
     }
   };
   document.getElementById('load_insert_formula_text').onclick = function (evt) {
-    const t = formula_text.value;
+    const t = formulaText.value;
     for (let i = 0; i < objs.length; i++) {
       const obj = objs[i];
       if (typeof obj.replace_selected_text === 'function' && obj.is_selected()) {
@@ -6546,8 +6546,8 @@ window.onload = function () {
   document.getElementById('gen_js').onclick = function (evt) {
     let js = '';
 
-    for (let i = 0; i < selected_objs.length; i++) {
-      const obj = selected_objs[i];
+    for (let i = 0; i < selectedObjs.length; i++) {
+      const obj = selectedObjs[i];
       if (obj.generate_javascript) {
         const s = obj.generate_javascript();
         js += `${s}\n`;
@@ -6571,7 +6571,7 @@ window.onload = function () {
 
     script = s_clean;
 
-    const t = new Text('', { x: 20, y: win_height * 2 - 60 });
+    const t = new Text('', { x: 20, y: winHeight * 2 - 60 });
     t.properties[frame].w = 0.6;
     t.properties[frame].h = 0.6;
     objs.push(t);
@@ -6586,7 +6586,7 @@ window.onload = function () {
       t.properties[fr].t = s;
     }
 
-    num_frames = script.length;
+    numFrames = script.length;
     frames.create_buttons();
 
     save_state();
@@ -6611,12 +6611,12 @@ window.onload = function () {
 
   transition = new Transition();
   frame = 1;
-  frames = new Frames({ x: c.width - grid_size * 2, y: grid_size / 4 });
+  frames = new Frames({ x: c.width - gridSize * 2, y: gridSize / 4 });
   frames.on_click = function (idx) {
     transition_with_next(idx);
   };
 
-  menu = new Menu({ x: grid_size / 4, y: grid_size / 2 });
+  menu = new Menu({ x: gridSize / 4, y: gridSize / 2 });
   cam = new Camera();
   pen = new Pen();
 
@@ -6749,8 +6749,8 @@ window.onload = function () {
       return;
     }
 
-    mouse_down = true;
-    mouse_start = get_mouse_pos(c, evt);
+    mouseDown = true;
+    mouseStart = getMousePos(c, evt);
 
     try {
       math.compile('click()').eval(parser.scope);
@@ -6805,18 +6805,18 @@ window.onload = function () {
 
   window.onmousemove = function (evt) {
     // update mouse
-    mouse = get_mouse_pos(c, evt);
-    mouse_grid = constrain_to_grid(mouse);
-    mouse_graph = cam.screen_to_graph(mouse);
+    mouse = getMousePos(c, evt);
+    mouseGrid = constrainToGrid(mouse);
+    mouseGraph = cam.screen_to_graph(mouse);
 
-    parser.set('_y', mouse_graph.x);
-    parser.set('_z', mouse_graph.y);
+    parser.set('_y', mouseGraph.x);
+    parser.set('_z', mouseGraph.y);
 
     if (pen.mouse_move(evt)) {
       return;
     }
 
-    if (mouse_down) {
+    if (mouseDown) {
       let captured = false;
       const N = objs.length;
       for (let i = N - 1; i >= 0; i--) {
@@ -6840,11 +6840,11 @@ window.onload = function () {
     }
 
     if (presenting) {
-      mouse_time = mouse_duration;
+      mouseTime = mouseDuration;
     }
 
-    mouse_last = get_mouse_pos(c, evt);
-    mouse_grid_last = constrain_to_grid(mouse);
+    mouseLast = getMousePos(c, evt);
+    mouse_grid_last = constrainToGrid(mouse);
   };
 
   window.onmouseup = function (evt) {
@@ -6852,7 +6852,7 @@ window.onload = function () {
       return;
     }
 
-    mouse_down = false;
+    mouseDown = false;
 
     if (presenting) {
       // maybe tap some text
@@ -6873,7 +6873,7 @@ window.onload = function () {
     }
 
     if (menu.mouse_up(evt)) {
-      new_line = null;
+      newLine = null;
       selecting = false;
 
       save_state();
@@ -6896,7 +6896,7 @@ window.onload = function () {
       }
     } else if (tool == 'text') {
       // add a num obj at mouse pos
-      const n = new Text('', mouse_grid);
+      const n = new Text('', mouseGrid);
 
       const N = objs.length;
       for (let i = 0; i < N; i++) {
@@ -6910,11 +6910,11 @@ window.onload = function () {
       objs.push(n);
     } else if (tool == 'shape' || tool == 'vector') {
       // add a num obj at mouse pos
-      if (new_line) {
+      if (newLine) {
         // add a point
-        new_line.add_point({ x: mouse_grid.x, y: mouse_grid.y });
+        newLine.add_point({ x: mouseGrid.x, y: mouseGrid.y });
       } else {
-        const l = new Shape([0, 0, 0, 1], [{ x: mouse_grid.x, y: mouse_grid.y }]);
+        const l = new Shape([0, 0, 0, 1], [{ x: mouseGrid.x, y: mouseGrid.y }]);
 
         if (tool == 'vector') {
           l.properties[frame].v = true;
@@ -6923,23 +6923,23 @@ window.onload = function () {
         }
 
         objs.push(l);
-        new_line = l;
+        newLine = l;
       }
 
       return;
     } else if (tool == 'circle') {
-      const new_circle = new Circle([0, 0, 0, 1], mouse_grid);
+      const new_circle = new Circle([0, 0, 0, 1], mouseGrid);
       objs.push(new_circle);
     } else if (tool == 'network') {
-      const n = new Network(mouse_grid);
+      const n = new Network(mouseGrid);
       objs.push(n);
     }
 
     if (selecting) {
       selecting = false;
 
-      const { x } = mouse_start;
-      const { y } = mouse_start;
+      const { x } = mouseStart;
+      const { y } = mouseStart;
       const x2 = mouse.x;
       const y2 = mouse.y;
 
@@ -6948,19 +6948,19 @@ window.onload = function () {
       xx2 = Math.max(x, x2);
       yy2 = Math.max(y, y2);
 
-      selected_objs = [];
+      selectedObjs = [];
 
       for (let i = 0; i < objs.length; i++) {
         const obj = objs[i];
         if (typeof obj.in_rect === 'function') {
           obj.in_rect(xx, yy, xx2, yy2);
           if (obj.is_selected()) {
-            selected_objs.push(obj);
+            selectedObjs.push(obj);
           }
         }
       }
 
-      const scopy = copy(selected_objs);
+      const scopy = copy(selectedObjs);
       for (let i = 0; i < scopy.length; i++) {
         const obj = scopy[i];
         const props = copy(obj.properties[frame]);
@@ -7016,7 +7016,7 @@ window.onload = function () {
     }
 
     if (presenting) {
-      mouse_time -= 1;
+      mouseTime -= 1;
     }
 
     if (!parser.get('_trace')) {
@@ -7027,7 +7027,7 @@ window.onload = function () {
 
     draw_axes(ctx);
 
-    ctx.font = font_anim;
+    ctx.font = fontAnim;
 
     const N = objs.length;
     for (let i = 0; i < N; i++) {
@@ -7052,21 +7052,21 @@ window.onload = function () {
     if (selecting) {
       // draw a rect
       ctx.strokeStyle = dark;
-      ctx.strokeRect(mouse_start.x, mouse_start.y, mouse.x - mouse_start.x, mouse.y - mouse_start.y);
+      ctx.strokeRect(mouseStart.x, mouseStart.y, mouse.x - mouseStart.x, mouse.y - mouseStart.y);
     }
 
-    ctx.font = font_menu;
+    ctx.font = fontMenu;
 
     if (!presenting) {
       frames.render(ctx);
       menu.render(ctx);
 
-      if (error_timer > 0) {
+      if (errorTimer > 0) {
         ctx.save();
         ctx.fillStyle = 'red';
-        ctx.fillText(error_text, 250, 30);
+        ctx.fillText(errorText, 250, 30);
         ctx.restore();
-        error_timer -= 1;
+        errorTimer -= 1;
       }
     }
 
@@ -7074,26 +7074,26 @@ window.onload = function () {
 
     draw_cursor();
 
-    if (view_frame) {
+    if (viewFrame) {
       ctx.save();
       ctx.strokeStyle = 'black';
       ctx.beginPath();
       const w = 1928; // +8 pixels for padding
       const h = 1088;
-      ctx.rect(win_width - w / 2, win_height - h / 2, w, h);
+      ctx.rect(winWidth - w / 2, winHeight - h / 2, w, h);
       ctx.stroke();
 
       if (!presenting) {
         ctx.globalAlpha = 0.1;
 
         ctx.beginPath();
-        ctx.moveTo(win_width - w / 2, win_height);
-        ctx.lineTo(win_width + w / 2, win_height);
+        ctx.moveTo(winWidth - w / 2, winHeight);
+        ctx.lineTo(winWidth + w / 2, winHeight);
         ctx.stroke();
 
         ctx.beginPath();
-        ctx.moveTo(win_width, win_height - h / 2);
-        ctx.lineTo(win_width, win_height + h / 2);
+        ctx.moveTo(winWidth, winHeight - h / 2);
+        ctx.lineTo(winWidth, winHeight + h / 2);
         ctx.stroke();
 
         ctx.globalAlpha = 1;
