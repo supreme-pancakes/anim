@@ -5,7 +5,7 @@ export const VERSION = packageJson.version; // Version
 const IS_MAC = navigator.platform.toUpperCase().includes('MAC'); // Running on macOS?
 
 // colors
-export const GRAY = '#cccccc';
+export const BORDER = '#000000';
 export const GRID = '#eeeeee';
 export const GRID_GUIDE = '#dddddd';
 export const GRAPH_GUIDE = '#aaaaaa';

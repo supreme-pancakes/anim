@@ -4,7 +4,7 @@ import {
   rtv,
   math,
   parser,
-  GRAY,
+  BORDER,
   DARK,
   COLORS,
   FONT,
@@ -4845,7 +4845,7 @@ function Text(text, pos) {
 
     this.draw_border = function(ctx) {
         ctx.save();
-        ctx.fillStyle = GRAY;
+        ctx.fillStyle = BORDER;
         ctx.globalAlpha = .2;
 
         if (this.image) {
