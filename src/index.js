@@ -17,6 +17,7 @@ import {
   MAT_NUM_WIDTH,
   VERSION,
   CHAR,
+  GRID,
 } from './resources';
 
 // custom functions!
@@ -6357,7 +6358,7 @@ function draw_axes(ctx) {
 
     if (csys_style == "3d" || csys_style == "flat") {
         // draw gridlines
-        ctx.strokeStyle = "#DDDDDD";
+        ctx.strokeStyle = GRID;
 
         if (csys_style == "3d") {
             let axis = rtv.cam.ticks[0];
