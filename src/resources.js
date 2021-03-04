@@ -4,17 +4,11 @@ import packageJson from '../package.json';
 export const VERSION = packageJson.version; // Version
 const IS_MAC = navigator.platform.toUpperCase().includes('MAC'); // Running on macOS?
 
-// colors
-export const BORDER = '#000000';
-export const GRID = '#dddddd';
-export const DARK = '#000000';
-export const LIGHT = '#ffffff';
-
+// Theme colors for UI
 export const THEME = {
   BORDER: '#000000',
   GRID: '#dddddd',
   DARK: '#000000',
-  LIGHT: '#ffffff',
 };
 
 // Color palette available to user

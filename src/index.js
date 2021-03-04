@@ -4,8 +4,7 @@ import {
   rtv,
   math,
   parser,
-  BORDER,
-  DARK,
+  THEME,
   PALETTE,
   FONT,
   SCALE_FACTOR,
@@ -17,7 +16,6 @@ import {
   MAT_NUM_WIDTH,
   VERSION,
   CHAR,
-  GRID,
 } from './resources';
 
 // custom functions!
@@ -3567,7 +3565,7 @@ function Shape(color, path) {
 
             // show selected indices
             if (!rtv.presenting && !hidden && (this.selected_indices.indexOf(i) != -1 || i == idx)) {
-                rtv.ctx.strokeStyle = DARK;
+                rtv.ctx.strokeStyle = THEME.DARK;
                 rtv.ctx.strokeRect(p.x- c.x -GRID_SIZE/2, p.y - c.y - GRID_SIZE/2, GRID_SIZE, GRID_SIZE);
             }
         }
@@ -3895,7 +3893,7 @@ function Circle(color, pos) {
 
         if (!rtv.presenting && props.c[3] != 0 && (this.selected || this.near_mouse())) {
             ctx.beginPath();
-            ctx.strokeStyle = DARK;
+            ctx.strokeStyle = THEME.DARK;
             ctx.strokeRect(props.p.x - GRID_SIZE/4, props.p.y - GRID_SIZE/4, GRID_SIZE/2, GRID_SIZE/2);
             ctx.stroke();
         }
@@ -4846,7 +4844,7 @@ function Text(text, pos) {
 
     this.draw_border = function(ctx) {
         ctx.save();
-        ctx.fillStyle = BORDER;
+        ctx.fillStyle = THEME.BORDER;
         ctx.globalAlpha = .2;
 
         if (this.image) {
@@ -5356,7 +5354,7 @@ function Network(pos) {
 
         if (!rtv.presenting && props.c[3] != 0 && (this.selected || this.near_mouse())) {
             ctx.beginPath();
-            ctx.strokeStyle = DARK;
+            ctx.strokeStyle = THEME.DARK;
             ctx.strokeRect(props.p.x - GRID_SIZE/4, props.p.y - GRID_SIZE/4, GRID_SIZE/2, GRID_SIZE/2);
             ctx.stroke();
         }
@@ -6358,7 +6356,7 @@ function draw_axes(ctx) {
 
     if (csys_style == "3d" || csys_style == "flat") {
         // draw gridlines
-        ctx.strokeStyle = GRID;
+        ctx.strokeStyle = THEME.GRID;
 
         if (csys_style == "3d") {
             let axis = rtv.cam.ticks[0];
@@ -6540,7 +6538,7 @@ function draw_cursor() {
 
         rtv.ctx.save();
         rtv.ctx.translate(mx, my);
-        rtv.ctx.strokeStyle = DARK;
+        rtv.ctx.strokeStyle = THEME.DARK;
         rtv.ctx.beginPath();
 
         if (rtv.mouse.down) {
@@ -6583,8 +6581,8 @@ window.onload = function() {
     rtv.c.style.height = rtv.win_height;
 
     rtv.ctx = rtv.c.getContext("2d");
-    rtv.ctx.fillStyle = DARK;
-    rtv.ctx.strokeStyle = DARK;
+    rtv.ctx.fillStyle = THEME.DARK;
+    rtv.ctx.strokeStyle = THEME.DARK;
     rtv.ctx.lineWidth = 4;
     rtv.ctx.textAlign = 'left';
     rtv.ctx.textBaseline = 'middle';
@@ -7143,7 +7141,7 @@ window.onload = function() {
 
         if (rtv.selecting) {
             // draw a rect
-            rtv.ctx.strokeStyle = DARK;
+            rtv.ctx.strokeStyle = THEME.DARK;
             rtv.ctx.strokeRect(rtv.mouse.start.x, rtv.mouse.start.y, rtv.mouse.pos.x - rtv.mouse.start.x, rtv.mouse.pos.y - rtv.mouse.start.y);
         }
 
