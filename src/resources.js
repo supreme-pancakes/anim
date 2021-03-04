@@ -12,7 +12,15 @@ export const GRAPH_GUIDE = '#aaaaaa';
 export const DARK = '#000000';
 export const LIGHT = '#ffffff';
 
-export const COLORS = ['#000000', '#E74C3C', '#2980B9', '#FFA400', '#66E07A', GRAY];
+// Color palette available to user
+export const COLORS = [
+  '#000000',
+  '#E74C3C',
+  '#2980B9',
+  '#FFA400',
+  '#66E07A',
+  '#cccccc',
+];
 
 export const FONT = {
   SMALL: '26px Courier',
