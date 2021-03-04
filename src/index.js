@@ -6,7 +6,7 @@ import {
   parser,
   BORDER,
   DARK,
-  COLORS,
+  PALETTE,
   FONT,
   SCALE_FACTOR,
   T_STEPS,
@@ -210,15 +210,15 @@ math.import({
                     const r = math.beval(s);
 
                     if (r) {
-                        rtv.ctx.fillStyle = COLORS[4];
+                        rtv.ctx.fillStyle = PALETTE[4];
                         rtv.ctx.fillText("T", 0, GRID_SIZE);
                     } else {
-                        rtv.ctx.fillStyle = COLORS[1];
+                        rtv.ctx.fillStyle = PALETTE[1];
                         rtv.ctx.fillText("F", 0, GRID_SIZE);
                     }
 
                     rtv.ctx.beginPath();
-                    rtv.ctx.strokeStyle = COLORS[5];
+                    rtv.ctx.strokeStyle = PALETTE[5];
                     rtv.ctx.moveTo(0, GRID_SIZE/2-2);
                     rtv.ctx.lineTo(GRID_SIZE * 5, GRID_SIZE/2-2);
                     rtv.ctx.stroke();
@@ -287,18 +287,18 @@ math.import({
         if (f[0]) {
             col = "white";
         } else if (f[1]) {
-            col = COLORS[3];
+            col = PALETTE[3];
         } else if (f[2]) {
-            col = COLORS[4];
+            col = PALETTE[4];
         }
 
         var scol = "white";
         if (f[3]) {
             scol = "white";
         } else if (f[4]) {
-            scol = COLORS[3];
+            scol = PALETTE[3];
         } else if (f[5]) {
-            scol = COLORS[4];
+            scol = PALETTE[4];
         }
 
         var spots = 0;
@@ -1101,7 +1101,7 @@ math.import({
                         let vlen = math.norm(vline);
 
                         if (d1 + d2 < vlen + 1) {
-                            rtv.ctx.strokeStyle = COLORS[3];
+                            rtv.ctx.strokeStyle = PALETTE[3];
                             high_conn = [i, k, j]; // unit i to unit k in layer j
                             high_neur = [[i, j], [k, j+1]];
                         }
@@ -1132,17 +1132,17 @@ math.import({
                     if (high_conn[2] == j) {
                         if (high_conn[0] == i) {
                             if (j == 0) {
-                                rtv.ctx.strokeStyle = COLORS[1];
+                                rtv.ctx.strokeStyle = PALETTE[1];
                             } else {
-                                rtv.ctx.strokeStyle = COLORS[2];
+                                rtv.ctx.strokeStyle = PALETTE[2];
                             }
                         }
                     } else if (high_conn[2] == j-1) {
                         if (high_conn[1] == i) {
                             if (j == 0) {
-                                rtv.ctx.strokeStyle = COLORS[1];
+                                rtv.ctx.strokeStyle = PALETTE[1];
                             } else {
-                                rtv.ctx.strokeStyle = COLORS[2];
+                                rtv.ctx.strokeStyle = PALETTE[2];
                             }
                         }
                     }
@@ -1155,9 +1155,9 @@ math.import({
 
                     if (dx*dx + dy*dy < 400) {
                         if (j == 0) {
-                            rtv.ctx.strokeStyle = COLORS[1];
+                            rtv.ctx.strokeStyle = PALETTE[1];
                         } else {
-                            rtv.ctx.strokeStyle = COLORS[2];
+                            rtv.ctx.strokeStyle = PALETTE[2];
                         }
 
                         high_neur = [[i, j]];
@@ -1346,7 +1346,7 @@ math.import({
             for (let n = 0; n < high_neur.length; n ++) {
                 let highn = high_neur[n];
                 if (highn[1] == 1 && highn[0] == i) {
-                    rtv.ctx.fillStyle = COLORS[2];
+                    rtv.ctx.fillStyle = PALETTE[2];
                 }
             }
         });
@@ -1359,7 +1359,7 @@ math.import({
         draw_matrix(Wformat, function(i, j) {
             rtv.ctx.fillStyle = "black";
             if (high_conn.length && high_conn[0] == j && high_conn[1] == i) {
-                rtv.ctx.fillStyle = COLORS[3];
+                rtv.ctx.fillStyle = PALETTE[3];
             }
         });
 
@@ -1373,7 +1373,7 @@ math.import({
             for (let n = 0; n < high_neur.length; n ++) {
                 let highn = high_neur[n];
                 if (highn[1] == 0 && highn[0] == i) {
-                    rtv.ctx.fillStyle = COLORS[1];
+                    rtv.ctx.fillStyle = PALETTE[1];
                 }
             }
         });
@@ -4627,7 +4627,7 @@ function Text(text, pos) {
             // draw red brackets
             ctx.save();
             if (this.is_selected() && plevel != 0) {
-                ctx.fillStyle = COLORS[1];
+                ctx.fillStyle = PALETTE[1];
                 let p2 = plevel;
                 for (let i = this.cursor; i < N; i++) {
                     if (t[i] in BRACKETS) p2 += BRACKETS[t[i]];
@@ -6041,10 +6041,10 @@ function Menu(pos) {
 
     }));
 
-    for (let i = 0; i < COLORS.length; i++) {
+    for (let i = 0; i < PALETTE.length; i++) {
 
         let b = new Button("", {x: 0, y: 0}, function(b) {
-            let rgb = hexToRgb(COLORS[i]);
+            let rgb = hexToRgb(PALETTE[i]);
 
             rtv.pen.set_color(rgb);
 
@@ -6055,7 +6055,7 @@ function Menu(pos) {
                 }
             }
         });
-        b.color = COLORS[i];
+        b.color = PALETTE[i];
         this.buttons.push(b);
     }
 

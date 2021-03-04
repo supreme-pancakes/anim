@@ -13,7 +13,7 @@ export const DARK = '#000000';
 export const LIGHT = '#ffffff';
 
 // Color palette available to user
-export const COLORS = [
+export const PALETTE = [
   '#000000',
   '#E74C3C',
   '#2980B9',
