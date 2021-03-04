@@ -12,6 +12,15 @@ export const GRAPH_GUIDE = '#aaaaaa';
 export const DARK = '#000000';
 export const LIGHT = '#ffffff';
 
+export const THEME = {
+  BORDER: '#000000',
+  GRID: '#eeeeee',
+  GRID_GUIDE: '#dddddd',
+  GRAPH_GUIDE: '#aaaaaa',
+  DARK: '#000000',
+  LIGHT: '#ffffff',
+};
+
 // Color palette available to user
 export const PALETTE = [
   '#000000',
